@@ -15,7 +15,48 @@ const App = () => {
     });
   }, []);
 
-  const submit = () => {};
+  const submit = () => {
+    let isValid = true;
+    const isInsert = !matches[0].UserMatchGuessId;
+    const team1GoalInputs = document.getElementsByName("team-1-goals");
+    team1GoalInputs.forEach((i) => {
+      const value = i.value;
+      if (!value || value < 0) {
+        isValid = false;
+        return;
+      }
+      const matchId = +i.id.split(" ").pop();
+      matches.filter((m) => m.MatchId === matchId)[0].Team1Goals = +value;
+    });
+
+    const team2GoalInputs = document.getElementsByName("team-2-goals");
+    team2GoalInputs.forEach((i) => {
+      const value = i.value;
+      if (!value || value < 0) {
+        isValid = false;
+        return;
+      }
+      const matchId = +i.id.split(" ").pop();
+      matches.filter((m) => m.MatchId === matchId)[0].Team2Goals = +value;
+    });
+
+    if (!isValid) {
+      alert("Please ensure all scores are entered.");
+      return;
+    }
+
+    Axios.post("http://localhost:3001/api/matchguesses?userId=1", {
+      matches: matches,
+    }).then((response) => {
+      // console.log(response);
+      setMatches(response.data);
+    });
+
+    alert(
+      `Your scores were successfully ${isInsert ? "submitted" : "updated"}.`
+    );
+    window.location.reload(false);
+  };
 
   const groupBy = (xs, key) => {
     const keyValues = [];
@@ -40,7 +81,7 @@ const App = () => {
           {matches.length > 0
             ? groupBy(matches, "MatchGroup").map((g) => {
                 return (
-                  <Row className="mx-auto">
+                  <Row className="mx-auto" id={g.key}>
                     <Col className="mx-auto p-1" md="10" lg="4">
                       <Card>
                         <Card.Body>
@@ -67,9 +108,23 @@ const App = () => {
                                       <label>{m.Team1}</label>
                                     </Col>
                                     <Col xs="3" className="p-0 m-0">
-                                      <input type="number" min="0" max="99" />
+                                      <input
+                                        type="number"
+                                        min="0"
+                                        max="99"
+                                        id={`team-1-goals ${m.MatchId}`}
+                                        name="team-1-goals"
+                                        defaultValue={m.Team1Goals}
+                                      />
                                       {"  -  "}
-                                      <input type="number" min="0" max="99" />
+                                      <input
+                                        type="number"
+                                        min="0"
+                                        max="99"
+                                        id={`team-1-goals ${m.MatchId}`}
+                                        name="team-2-goals"
+                                        defaultValue={m.Team2Goals}
+                                      />
                                     </Col>
                                     <Col className="p-0">
                                       <label>{m.Team2}</label>
@@ -77,8 +132,8 @@ const App = () => {
                                     <Col className="p-0">
                                       <img
                                         src={`/images/country-flags/${
-                                          !m.Team1IsPlaceholder
-                                            ? m.Team1
+                                          !m.Team2IsPlaceholder
+                                            ? m.Team2
                                             : "Placeholder"
                                         }.png`}
                                         alt={`${m.Team2} Flag`}

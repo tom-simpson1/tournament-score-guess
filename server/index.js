@@ -57,6 +57,27 @@ app.get("/api/matches", (req, res) => {
   });
 });
 
+app.post("/api/matchguesses", (req, res) => {
+  const userId = req.query.userId;
+  const matches = req.body.matches;
+
+  const isInsert = !matches[0].UserMatchGuessId;
+  if (isInsert) {
+    matches.forEach((x) => {
+      const sql = `INSERT INTO UserMatchGuesses (UserId, MatchId, Team1Goals, Team2Goals, UserScore)
+                    VALUES (?,?,?,?,NULL)`;
+      db.query(sql, [userId, x.MatchId, x.Team1Goals, x.Team2Goals]);
+    });
+  } else {
+    matches.forEach((x) => {
+      const sql = `UPDATE UserMatchGuesses
+      SET Team1Goals = ?, Team2Goals = ?
+      WHERE UserId = ? AND MatchId = ?`;
+      db.query(sql, [x.Team1Goals, x.Team2Goals, userId, x.MatchId]);
+    });
+  }
+});
+
 app.listen(3001, () => {
   console.log("running on port 3001");
 });
