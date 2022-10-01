@@ -53,24 +53,36 @@ const App = () => {
                                     className="p-1"
                                     style={{ alignItems: "center" }}
                                   >
-                                    <Col>
+                                    <Col className="p-0 m-0">
+                                      <img
+                                        src={`/images/country-flags/${
+                                          !m.Team1IsPlaceholder
+                                            ? m.Team1
+                                            : "Placeholder"
+                                        }.png`}
+                                        alt={`${m.Team1} Flag`}
+                                      />
+                                    </Col>
+                                    <Col className="p-0">
                                       <label>{m.Team1}</label>
                                     </Col>
-                                    <Col xs="4">
-                                      <input
-                                        inputMode="number"
-                                        min="0"
-                                        max="99"
-                                      />
+                                    <Col xs="3" className="p-0 m-0">
+                                      <input type="number" min="0" max="99" />
                                       {"  -  "}
-                                      <input
-                                        inputMode="number"
-                                        min="0"
-                                        max="99"
-                                      />
+                                      <input type="number" min="0" max="99" />
                                     </Col>
-                                    <Col>
+                                    <Col className="p-0">
                                       <label>{m.Team2}</label>
+                                    </Col>
+                                    <Col className="p-0">
+                                      <img
+                                        src={`/images/country-flags/${
+                                          !m.Team1IsPlaceholder
+                                            ? m.Team1
+                                            : "Placeholder"
+                                        }.png`}
+                                        alt={`${m.Team2} Flag`}
+                                      />
                                     </Col>
                                   </Row>
                                   <Row className="pb-3">

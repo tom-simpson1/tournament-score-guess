@@ -79,6 +79,10 @@ input[type="number"] {
   margin: 5px;
 }
 
+.form label {
+  font-size: 1rem;
+}
+
 .form small {
   font-size: 0.6rem;
 }

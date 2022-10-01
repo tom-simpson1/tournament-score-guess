@@ -40,7 +40,9 @@ app.get("/api/matches", (req, res) => {
       m.MatchTime,
       umg.Id as UserMatchGuessId,
       umg.Team1Goals,
-      umg.Team2Goals
+      umg.Team2Goals,
+      t1.IsPlaceholder as Team1IsPlaceholder,
+      t2.IsPlaceholder as Team2IsPlaceholder
     FROM
       Matches m
       INNER JOIN MatchGroups mg ON mg.Id = m.MatchGroupId
