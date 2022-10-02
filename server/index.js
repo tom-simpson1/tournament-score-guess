@@ -61,9 +61,11 @@ app.get("/api/matches", (req, res) => {
   });
 });
 
-app.post("/api/matchguesses", (req, res) => {
+app.post("/api/guesses", (req, res) => {
   const userId = req.query.userId;
+  const tournamentId = req.query.tournamentId;
   const matches = req.body.matches;
+  const tieBreakAnswer = req.body.tieBreakAnswer;
 
   const isInsert = !matches[0].UserMatchGuessId;
   if (isInsert) {
@@ -80,13 +82,20 @@ app.post("/api/matchguesses", (req, res) => {
       db.query(sql, [x.Team1Goals, x.Team2Goals, userId, x.MatchId]);
     });
   }
+
+  const sql = `UPDATE TournamentUsers SET TieBreakAnswer = ? WHERE TournamentId = ? AND userId = ?`;
+  db.query(sql, [tieBreakAnswer, tournamentId, userId]);
 });
 
 app.get("/api/tournament", (req, res) => {
-  const id = req.query.id;
+  const tournamentId = req.query.tournamentId;
+  const userId = req.query.userId;
 
-  const sql = `SELECT Name, TieBreakQuestion FROM Tournaments WHERE Id = ?`;
-  db.query(sql, [id], (err, rows) => {
+  const sql = `SELECT t.Name, t.TieBreakQuestion, tu.TieBreakAnswer
+                FROM Tournaments t
+                INNER JOIN TournamentUsers tu ON tu.TournamentId = t.Id
+                WHERE t.Id = ? AND tu.UserId = ?`;
+  db.query(sql, [tournamentId, userId], (err, rows) => {
     res.send(rows[0]);
   });
 });

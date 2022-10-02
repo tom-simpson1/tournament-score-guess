@@ -6,11 +6,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 
 const App = () => {
-  const [tournament, setTournament] = useState([]);
+  const [tournament, setTournament] = useState();
   const [matches, setMatches] = useState([]);
 
   useEffect(() => {
-    Axios.get(`http://localhost:3001/api/tournament?id=1`).then((response) => {
+    Axios.get(
+      `http://localhost:3001/api/tournament?tournamentId=1&userId=1`
+    ).then((response) => {
+      console.log(response);
       setTournament(response.data);
     });
   }, []);
@@ -59,13 +62,15 @@ const App = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/api/matchguesses?userId=1", {
+    Axios.post("http://localhost:3001/api/guesses?userId=1&tournamentId=1", {
       matches: matches,
       tieBreakAnswer: tieBreakValue,
     });
 
     alert(
-      `Your scores were successfully ${isInsert ? "submitted" : "updated"}.`
+      `Your predictions were successfully ${
+        isInsert ? "submitted" : "updated"
+      }!`
     );
     window.location.reload(false);
   };
@@ -86,7 +91,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <h2 className="p-3">{tournament.Name} - Predictions</h2>
+      <h2 className="p-3">{tournament?.Name} - Predictions</h2>
 
       <Form className="form">
         <Container fluid>
@@ -188,7 +193,7 @@ const App = () => {
                           min="0"
                           max="1000"
                           id="tie-break"
-                          defaultValue={0}
+                          defaultValue={tournament.TieBreakAnswer}
                         />
                       </Col>
                     </Row>
