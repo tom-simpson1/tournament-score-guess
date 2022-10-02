@@ -32,6 +32,8 @@ app.post("/api/users", (req, res) => {
 
 app.get("/api/matches", (req, res) => {
   const userId = req.query.userId;
+  const tournamentId = req.query.tournamentId;
+
   const sql = `SELECT
       m.Id as MatchId,
       mg.Identifier as MatchGroup,
@@ -49,11 +51,13 @@ app.get("/api/matches", (req, res) => {
       INNER JOIN Teams t1 ON t1.Id = m.Team1Id
       INNER JOIN Teams t2 ON t2.Id = m.Team2Id
       LEFT JOIN UserMatchGuesses umg ON umg.MatchId = m.Id AND umg.UserId = ?
+    WHERE
+      mg.TournamentId = ?
     ORDER BY
       mg.Id, m.Id`;
 
-  db.query(sql, [userId], (err, result) => {
-    res.send(result);
+  db.query(sql, [userId, tournamentId], (err, rows) => {
+    res.send(rows);
   });
 });
 
@@ -76,6 +80,15 @@ app.post("/api/matchguesses", (req, res) => {
       db.query(sql, [x.Team1Goals, x.Team2Goals, userId, x.MatchId]);
     });
   }
+});
+
+app.get("/api/tournament", (req, res) => {
+  const id = req.query.id;
+
+  const sql = `SELECT Name, TieBreakQuestion FROM Tournaments WHERE Id = ?`;
+  db.query(sql, [id], (err, rows) => {
+    res.send(rows[0]);
+  });
 });
 
 app.listen(3001, () => {

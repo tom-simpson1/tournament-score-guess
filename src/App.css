@@ -69,6 +69,11 @@ input[type="number"] {
   text-align: center;
 }
 
+.tie-break-input {
+  width: 50px;
+  text-align: center;
+}
+
 .match-groups {
   margin: auto;
   padding: 1rem;

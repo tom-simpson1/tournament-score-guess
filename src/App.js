@@ -6,13 +6,23 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 
 const App = () => {
+  const [tournament, setTournament] = useState([]);
   const [matches, setMatches] = useState([]);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/api/matches?userId=1").then((response) => {
-      // console.log(response);
-      setMatches(response.data);
+    Axios.get(`http://localhost:3001/api/tournament?id=1`).then((response) => {
+      setTournament(response.data);
     });
+  }, []);
+
+  useEffect(() => {
+    Axios.get(`http://localhost:3001/api/matches?userId=1&tournamentId=1`).then(
+      (response) => {
+        console.log(response);
+        // setMatches(response.data);
+        setMatches(response.data);
+      }
+    );
   }, []);
 
   const submit = () => {
@@ -40,16 +50,18 @@ const App = () => {
       matches.filter((m) => m.MatchId === matchId)[0].Team2Goals = +value;
     });
 
+    const tieBreakValue = document.getElementById("tie-break").value;
+
+    if (!tieBreakValue || tieBreakValue < 0) isValid = false;
+
     if (!isValid) {
-      alert("Please ensure all scores are entered.");
+      alert("Please ensure all predictions are entered.");
       return;
     }
 
     Axios.post("http://localhost:3001/api/matchguesses?userId=1", {
       matches: matches,
-    }).then((response) => {
-      // console.log(response);
-      setMatches(response.data);
+      tieBreakAnswer: tieBreakValue,
     });
 
     alert(
@@ -74,14 +86,14 @@ const App = () => {
 
   return (
     <div className="App">
-      <h1>Qatar World Cup 2022 - Predictions</h1>
+      <h2 className="p-3">{tournament.Name} - Predictions</h2>
 
       <Form className="form">
         <Container fluid>
           {matches.length > 0
             ? groupBy(matches, "MatchGroup").map((g) => {
                 return (
-                  <Row className="mx-auto" id={g.key}>
+                  <Row className="mx-auto">
                     <Col className="mx-auto p-1" md="10" lg="4">
                       <Card>
                         <Card.Body>
@@ -159,6 +171,32 @@ const App = () => {
                 );
               })
             : null}
+          {tournament ? (
+            <Row className="mx-auto">
+              <Col className="mx-auto p-1" md="10" lg="4">
+                <Card>
+                  <Card.Body>
+                    <Card.Title className="px-0">Tie Break</Card.Title>
+                    <Row>
+                      <Col>
+                        <label className="p-2">
+                          {tournament.TieBreakQuestion}
+                        </label>
+                        <input
+                          style={{ width: "50px" }}
+                          type="number"
+                          min="0"
+                          max="1000"
+                          id="tie-break"
+                          defaultValue={0}
+                        />
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          ) : null}
         </Container>
         <Button className="m-3" onClick={submit}>
           Submit
