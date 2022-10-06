@@ -4,10 +4,13 @@ import Axios from "axios";
 import { Row, Col, Button, Form, Card, Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
+import { useAuth } from "../utils/auth";
 
 const InitialPredictions = () => {
   const [tournament, setTournament] = useState();
   const [matches, setMatches] = useState([]);
+
+  const auth = useAuth();
 
   useEffect(() => {
     Axios.get(

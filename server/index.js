@@ -19,14 +19,51 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.post("/api/users", (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+// app.post("/api/users", (req, res) => {
+//   const username = req.body.username;
+//   const password = req.body.password;
 
-  const sql =
-    "INSERT INTO Users (Username, Password, PasswordHash, Salt, IsAdmin) VALUES (?,?,NULL,NULL,0)";
-  db.query(sql, [username, password], (err, res) => {
-    console.log(err);
+//   const sql =
+//     "INSERT INTO Users (Username, Password, PasswordHash, Salt, IsAdmin) VALUES (?,?,NULL,NULL,0)";
+//   db.query(sql, [username, password], (err, res) => {
+//     console.log(err);
+//   });
+// });
+
+app.post("/api/register", (req, res) => {
+  const code = req.body.code;
+
+  const codeCheckSql = `SELECT * FROM Users WHERE Password = ? LIMIT 1`;
+  db.query(codeCheckSql, [code], (err, rows) => {
+    if (err) return res.send({ message: err });
+
+    if (rows.length === 0) return res.send({ message: "Code doesn't exist." });
+  });
+
+  const username = req.body.username;
+
+  const usernameCheckSql = `SELECT * FROM Users WHERE Username = ?`;
+  db.query(usernameCheckSql, [username], (err, rows) => {
+    if (err) return res.send({ message: err });
+
+    if (rows.length > 0)
+      return res.send({ message: "Username already in use." });
+  });
+
+  const email = req.body.email;
+  const password = req.body.password;
+  const salt = req.body.salt;
+  const updateSql = `UPDATE Users
+                      SET Username = ?, Email = ?, PasswordHash = ?, Salt = ?, Password = NULL
+                      WHERE Password = ?`;
+  db.query(updateSql, [username, email, password, salt, code], (err) => {
+    if (err) return res.send({ message: err });
+  });
+
+  const getUserSql = "SELECT Id, Username FROM Users WHERE Username = ?";
+  db.query(getUserSql, [username], (err, rows) => {
+    if (err) return res.send({ message: err });
+    else return res.send({ result: rows });
   });
 });
 

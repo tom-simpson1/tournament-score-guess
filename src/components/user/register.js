@@ -1,5 +1,9 @@
+import Axios from "axios";
 import { useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
+import bcrypt from "bcryptjs";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../utils/auth";
 
 const Register = () => {
   const [code, setCode] = useState("");
@@ -13,6 +17,9 @@ const Register = () => {
   const CODE_REGEX = /^[a-zA-Z0-9]{6,}$/;
   const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_.]{3,23}$/;
   const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,24}$/;
+
+  const auth = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,11 +51,28 @@ const Register = () => {
       return;
     }
 
-    console.log(code, username, email, password, confirmPassword);
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    Axios.post("http://localhost:3001/api/register", {
+      code: code,
+      username: username,
+      email: email,
+      password: hashedPassword,
+      salt: salt,
+    }).then((res) => {
+      if (res.data.message) setError(res.data.message);
+      else {
+        auth.login(res.data);
+        console.log(res);
+        navigate("/initialpredictions");
+      }
+    });
   };
 
   return (
     <Container fluid>
+      <h1 className="mb-3">Qatar 2022 Predictions</h1>
       <Row>
         <Col className="mx-auto" xs="12" md="4">
           <Card>
@@ -118,6 +142,9 @@ const Register = () => {
                 <Button variant="primary" type="submit">
                   Submit
                 </Button>
+                <p className="mt-2">
+                  Already have an account? <Link to="/">Login</Link>
+                </p>
               </Form>
             </Card.Body>
           </Card>
