@@ -1,3 +1,4 @@
+import Axios from "axios";
 import { useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,15 +12,25 @@ const Login = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("handle submit hit", username);
     //try log in
-
-    //if success
-    const user = null; //set this
-    auth.Login(user);
-
-    //navigate to intial guess page
-    navigate("/initialpredictions");
+    Axios.post("http://localhost:3001/api/login", {
+      username: username,
+      password: password,
+    }).then((res) => {
+      console.log(res);
+      if (!res.data || res.data === {} || res.data.message) {
+        console.log("Set Error");
+        setError(res.data?.message ?? "Something went wrong.");
+      } else {
+        console.log("Log User In");
+        auth.login(res.data.user);
+        navigate("/initialpredictions", { replace: true });
+      }
+    });
   };
 
   return (

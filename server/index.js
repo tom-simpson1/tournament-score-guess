@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 const mysql = require("mysql");
+const bcrypt = require("bcryptjs");
 
 const db = mysql.createPool({
   host: "tsg-db.cscjhbruzusj.eu-west-2.rds.amazonaws.com",
@@ -60,10 +61,33 @@ app.post("/api/register", (req, res) => {
     if (err) return res.send({ message: err });
   });
 
-  const getUserSql = "SELECT Id, Username FROM Users WHERE Username = ?";
+  const getUserSql = "SELECT * FROM Users WHERE Username = ?";
   db.query(getUserSql, [username], (err, rows) => {
     if (err) return res.send({ message: err });
-    else return res.send({ result: rows });
+
+    if (rows[0]) return res.send({ user: rows[0] });
+    else return res.send({ message: "Something went wrong." });
+  });
+});
+
+app.post("/api/login", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  const invalidMessage = "Username or password incorrect.";
+
+  const getUserSql = "SELECT * FROM Users WHERE Username = ?";
+  db.query(getUserSql, [username], (err, rows) => {
+    if (err) return res.send({ message: err });
+    if (!rows[0]) return res.send({ message: invalidMessage });
+
+    const salt = rows[0].Salt;
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    if (hashedPassword !== rows[0].PasswordHash.toString())
+      return res.send({ message: invalidMessage });
+
+    res.send({ user: rows[0] });
   });
 });
 

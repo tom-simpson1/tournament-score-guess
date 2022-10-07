@@ -61,10 +61,11 @@ const Register = () => {
       password: hashedPassword,
       salt: salt,
     }).then((res) => {
-      if (res.data.message) setError(res.data.message);
-      else {
-        auth.login(res.data);
+      if (!res.data || res.data === {} || res.data.message) {
+        setError(res.data?.message ?? "Something went wrong.");
+      } else {
         console.log(res);
+        auth.login(res.data.user);
         navigate("/initialpredictions");
       }
     });
