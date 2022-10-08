@@ -93,7 +93,7 @@ const InitialPredictions = () => {
   return (
     <div className="App">
       <h2 className="p-3">
-        {tournament?.Name} - Predictions - {auth.user.Username}
+        {tournament?.Name} - Predictions - {auth.user.username}
       </h2>
 
       <Form className="form">

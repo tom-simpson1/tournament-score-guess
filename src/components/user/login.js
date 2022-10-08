@@ -15,22 +15,25 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("handle submit hit", username);
-    //try log in
-    Axios.post("http://localhost:3001/api/login", {
-      username: username,
-      password: password,
-    }).then((res) => {
-      console.log(res);
-      if (!res.data || res.data === {} || res.data.message) {
-        console.log("Set Error");
-        setError(res.data?.message ?? "Something went wrong.");
-      } else {
-        console.log("Log User In");
-        auth.login(res.data.user);
-        navigate("/initialpredictions", { replace: true });
-      }
-    });
+    // console.log("handle submit hit", username);
+    // //try log in
+    // Axios.post("http://localhost:3001/api/login", {
+    //   username: username,
+    //   password: password,
+    // }).then((res) => {
+    //   console.log(res);
+    //   if (!res.data || res.data === {} || res.data.message) {
+    //     console.log("Set Error");
+    //     setError(res.data?.message ?? "Something went wrong.");
+    //   } else {
+    //     console.log("Log User In");
+    //     auth.login(res.data.user);
+    //     navigate("/initialpredictions", { replace: true });
+    //   }
+    // });
+    auth
+      .login(username, password)
+      .then((res) => console.log("Login res: ", res));
   };
 
   return (

@@ -4,6 +4,8 @@ const cors = require("cors");
 const app = express();
 const mysql = require("mysql");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const db = mysql.createPool({
   host: "tsg-db.cscjhbruzusj.eu-west-2.rds.amazonaws.com",
@@ -30,6 +32,22 @@ app.get("/", (req, res) => {
 //     console.log(err);
 //   });
 // });
+
+app.get("/api/user", (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(403).send("You are forbidden from accessing this page.");
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.REACT_APP_TOKEN_KEY);
+    res.send({ user: decoded });
+  } catch (err) {
+    return res.status(401).send("Invalid Token");
+  }
+});
 
 app.post("/api/register", (req, res) => {
   const code = req.body.code;
@@ -61,13 +79,13 @@ app.post("/api/register", (req, res) => {
     if (err) return res.send({ message: err });
   });
 
-  const getUserSql = "SELECT * FROM Users WHERE Username = ?";
-  db.query(getUserSql, [username], (err, rows) => {
-    if (err) return res.send({ message: err });
+  // const getUserSql = "SELECT * FROM Users WHERE Username = ?";
+  // db.query(getUserSql, [username], (err, rows) => {
+  //   if (err) return res.send({ message: err });
 
-    if (rows[0]) return res.send({ user: rows[0] });
-    else return res.send({ message: "Something went wrong." });
-  });
+  //   if (rows[0]) return res.send({ user: rows[0] });
+  //   else return res.send({ message: "Something went wrong." });
+  // });
 });
 
 app.post("/api/login", (req, res) => {
@@ -87,7 +105,24 @@ app.post("/api/login", (req, res) => {
     if (hashedPassword !== rows[0].PasswordHash.toString())
       return res.send({ message: invalidMessage });
 
-    res.send({ user: rows[0] });
+    const user = {
+      userId: rows[0].Id,
+      username: rows[0].Username,
+      isAdmin: rows[0].IsAdmin,
+    };
+
+    const token = jwt.sign(user, process.env.REACT_APP_TOKEN_KEY, {
+      expiresIn: "2h",
+    });
+
+    res.send({
+      user: {
+        userId: rows[0].Id,
+        username: rows[0].Username,
+        isAdmin: rows[0].IsAdmin,
+      },
+      token: token,
+    });
   });
 });
 
