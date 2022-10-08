@@ -127,7 +127,22 @@ app.post("/api/login", (req, res) => {
 });
 
 app.get("/api/matches", (req, res) => {
-  const userId = req.query.userId;
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  let userId = null;
+
+  if (!token) {
+    return res.status(403).send("You are forbidden from accessing this page.");
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.REACT_APP_TOKEN_KEY);
+    userId = decoded.userId;
+  } catch (err) {
+    return res.status(401).send("Invalid Token");
+  }
+
   const tournamentId = req.query.tournamentId;
 
   const sql = `SELECT
@@ -158,7 +173,22 @@ app.get("/api/matches", (req, res) => {
 });
 
 app.post("/api/guesses", (req, res) => {
-  const userId = req.query.userId;
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  let userId = null;
+
+  if (!token) {
+    return res.status(403).send("You are forbidden from accessing this page.");
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.REACT_APP_TOKEN_KEY);
+    userId = decoded.userId;
+  } catch (err) {
+    return res.status(401).send("Invalid Token");
+  }
+
   const tournamentId = req.query.tournamentId;
   const matches = req.body.matches;
   const tieBreakAnswer = req.body.tieBreakAnswer;
@@ -184,8 +214,23 @@ app.post("/api/guesses", (req, res) => {
 });
 
 app.get("/api/tournament", (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  let userId = null;
+
+  if (!token) {
+    return res.status(403).send("You are forbidden from accessing this page.");
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.REACT_APP_TOKEN_KEY);
+    userId = decoded.userId;
+  } catch (err) {
+    return res.status(401).send("Invalid Token");
+  }
+
   const tournamentId = req.query.tournamentId;
-  const userId = req.query.userId;
 
   const sql = `SELECT t.Name, t.TieBreakQuestion, tu.TieBreakAnswer
                 FROM Tournaments t

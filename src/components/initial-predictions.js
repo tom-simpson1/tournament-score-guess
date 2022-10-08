@@ -13,20 +13,24 @@ const InitialPredictions = () => {
   const auth = useAuth();
 
   useEffect(() => {
-    Axios.get(
-      `http://localhost:3001/api/tournament?tournamentId=1&userId=1`
-    ).then((response) => {
+    Axios.get(`http://localhost:3001/api/tournament?tournamentId=1`, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    }).then((response) => {
       setTournament(response.data);
     });
   }, []);
 
   useEffect(() => {
-    Axios.get(`http://localhost:3001/api/matches?userId=1&tournamentId=1`).then(
-      (response) => {
-        // setMatches(response.data);
-        setMatches(response.data);
-      }
-    );
+    Axios.get(`http://localhost:3001/api/matches?tournamentId=1`, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    }).then((response) => {
+      // setMatches(response.data);
+      setMatches(response.data);
+    });
   }, []);
 
   const submit = () => {
@@ -63,10 +67,18 @@ const InitialPredictions = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/api/guesses?userId=1&tournamentId=1", {
-      matches: matches,
-      tieBreakAnswer: tieBreakValue,
-    });
+    Axios.post(
+      "http://localhost:3001/api/guesses?tournamentId=1",
+      {
+        matches: matches,
+        tieBreakAnswer: tieBreakValue,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
 
     alert(
       `Your predictions were successfully ${
