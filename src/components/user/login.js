@@ -31,9 +31,9 @@ const Login = () => {
     //     navigate("/initialpredictions", { replace: true });
     //   }
     // });
-    auth
-      .login(username, password)
-      .then((res) => console.log("Login res: ", res));
+    auth.login(username, password).then((res) => {
+      if (res) setError(res);
+    });
   };
 
   return (

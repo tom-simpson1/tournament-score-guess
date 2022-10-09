@@ -5,21 +5,27 @@ import { Row, Col, Button, Form, Card, Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 import { useAuth } from "../utils/auth";
+import { useNavigate } from "react-router-dom";
 
 const InitialPredictions = () => {
   const [tournament, setTournament] = useState();
   const [matches, setMatches] = useState([]);
 
   const auth = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     Axios.get(`http://localhost:3001/api/tournament?tournamentId=1`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-    }).then((response) => {
-      setTournament(response.data);
-    });
+    })
+      .then((response) => {
+        setTournament(response.data);
+      })
+      .catch(() => {
+        navigate("/");
+      });
   }, []);
 
   useEffect(() => {
@@ -27,10 +33,14 @@ const InitialPredictions = () => {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-    }).then((response) => {
-      // setMatches(response.data);
-      setMatches(response.data);
-    });
+    })
+      .then((response) => {
+        // setMatches(response.data);
+        setMatches(response.data);
+      })
+      .catch(() => {
+        navigate("/");
+      });
   }, []);
 
   const submit = () => {
@@ -105,7 +115,7 @@ const InitialPredictions = () => {
   return (
     <div className="App">
       <h2 className="p-3">
-        {tournament?.Name} - Predictions - {auth.user.username}
+        {tournament?.Name} - Predictions - {auth.user?.username}
       </h2>
 
       <Form className="form">
@@ -232,6 +242,9 @@ const InitialPredictions = () => {
         </Container>
         <Button className="m-3" onClick={submit}>
           Submit
+        </Button>
+        <Button className="m-3" onClick={auth.logout}>
+          Logout
         </Button>
       </Form>
     </div>

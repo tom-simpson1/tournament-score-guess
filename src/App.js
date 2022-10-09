@@ -13,14 +13,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route
-            path="/initialpredictions"
-            element={
-              <RequireAuth>
-                <InitialPredictions />
-              </RequireAuth>
-            }
-          />
+          <Route path="/initialpredictions" element={<InitialPredictions />} />
         </Routes>
       </div>
     </AuthProvider>

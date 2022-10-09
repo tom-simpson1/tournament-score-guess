@@ -74,10 +74,19 @@ app.post("/api/register", (req, res) => {
   const salt = req.body.salt;
   const updateSql = `UPDATE Users
                       SET Username = ?, Email = ?, PasswordHash = ?, Salt = ?, Password = NULL
-                      WHERE Password = ?`;
-  db.query(updateSql, [username, email, password, salt, code], (err) => {
-    if (err) return res.send({ message: err });
-  });
+                      WHERE Password = ?;`;
+  //TODO: Add user to current tournament (Add trounament id to token)
+  // INSERT INTO TournamentUsers (TournamentId, UserId) VALUES
+  // SELECT ((SELECT Id FROM Tournaments WHERE IsActive = 1 LIMIT 1),(SELECT Id FROM Users WHERE Username = ? LIMIT 1))`;
+  db.query(
+    updateSql,
+    [username, email, password, salt, code, username],
+    (err) => {
+      if (err) return res.send({ message: err });
+    }
+  );
+
+  res.end();
 
   // const getUserSql = "SELECT * FROM Users WHERE Username = ?";
   // db.query(getUserSql, [username], (err, rows) => {
@@ -211,6 +220,8 @@ app.post("/api/guesses", (req, res) => {
 
   const sql = `UPDATE TournamentUsers SET TieBreakAnswer = ? WHERE TournamentId = ? AND userId = ?`;
   db.query(sql, [tieBreakAnswer, tournamentId, userId]);
+
+  res.end();
 });
 
 app.get("/api/tournament", (req, res) => {

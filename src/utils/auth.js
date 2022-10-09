@@ -54,32 +54,37 @@ function useAuthProvider() {
     return await axios
       .post(`${api}/login`, { username: username, password: password })
       .then((res) => {
+        if (res.data.message) return res.data.message;
         localStorage.setItem("token", res.data.token);
         setUser(res.data.user);
         navigate("/initialpredictions");
       })
       .catch((err) => {
-        console.log(err);
         return err;
       });
   };
 
-  const register = async (code, username, email, password) => {
+  const register = async (code, username, email, password, salt) => {
     return await axios
-      .post(api + "/register", {
+      .post(`${api}/register`, {
         code,
         username,
         email,
         password,
+        salt,
       })
       .then((res) => {
-        console.log(res);
-        window.location("/login");
-
-        // localStorage.setItem("token", res.access_token);
+        console.log("Register Result: ", res);
+        if (res.data.message) {
+          console.log(res.data.message);
+          return res.data.message;
+        }
+        console.log("Registration successful");
+        navigate("/");
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Registration Error: ", err);
+        return err;
       });
   };
 
@@ -87,6 +92,7 @@ function useAuthProvider() {
     if (user) {
       localStorage.removeItem("token");
       setUser(null);
+      navigate("/");
     }
     return;
   };
