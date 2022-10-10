@@ -1,10 +1,12 @@
+import { useAuth } from "../utils/auth";
 import NavigationBar from "./navigation-bar";
 
 const Scores = () => {
+  const auth = useAuth();
   return (
     <>
       <NavigationBar activeKey="scores" />
-      <div>Scores</div>
+      <h2 className="p-3">{auth.user?.tournamentName} - Scores</h2>
     </>
   );
 };
