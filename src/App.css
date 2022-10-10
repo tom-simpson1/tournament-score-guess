@@ -107,3 +107,7 @@ input[type="number"] {
 .error {
   color: red;
 }
+
+.active {
+  border-bottom: 3px solid blue;
+}

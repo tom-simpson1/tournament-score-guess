@@ -30,21 +30,25 @@ function useAuthProvider() {
   const checkAuth = async () => {
     // console.log("token: ", localStorage.getItem("token"), user);
     // no token provided or user already checked prevents to make unwanted requests
+
     if (!localStorage.getItem("token") || user !== null) {
       return;
     }
 
+    console.log("Check User");
     await axios
-      .get(api + "/user", {
+      .get(`${api}/user`, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
       .then((res) => {
+        console.log("Check Auth User:", res.data.user);
         setUser(res.data.user);
         return res;
       })
       .catch((err) => {
+        console.log(err);
         return err;
       });
   };
@@ -57,6 +61,7 @@ function useAuthProvider() {
         if (res.data.message) return res.data.message;
         localStorage.setItem("token", res.data.token);
         setUser(res.data.user);
+        console.log("Login User:", res.data.user);
         navigate("/initialpredictions");
       })
       .catch((err) => {
@@ -89,11 +94,9 @@ function useAuthProvider() {
   };
 
   const logout = () => {
-    if (user) {
-      localStorage.removeItem("token");
-      setUser(null);
-      navigate("/");
-    }
+    localStorage.removeItem("token");
+    setUser(null);
+    navigate("/");
     return;
   };
 

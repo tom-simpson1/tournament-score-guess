@@ -33,20 +33,28 @@ app.get("/", (req, res) => {
 //   });
 // });
 
-app.get("/api/user", (req, res) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
+const getUser = (token) => {
   if (!token) {
-    return res.status(403).send("You are forbidden from accessing this page.");
+    return null;
   }
 
   try {
     const decoded = jwt.verify(token, process.env.REACT_APP_TOKEN_KEY);
-    res.send({ user: decoded });
+    return decoded;
   } catch (err) {
-    return res.status(401).send("Invalid Token");
+    return null;
   }
+};
+
+app.get("/api/user", (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  const user = getUser(token);
+
+  return (
+    res.send({ user }) ??
+    res.status(401).send("You are unauthorised to access this page.")
+  );
 });
 
 app.post("/api/register", (req, res) => {
@@ -103,7 +111,11 @@ app.post("/api/login", (req, res) => {
 
   const invalidMessage = "Username or password incorrect.";
 
-  const getUserSql = "SELECT * FROM Users WHERE Username = ?";
+  const getUserSql = `SELECT u.*, t.Name as TournamentName, tu.TournamentId FROM tsg.Users u
+                      INNER JOIN tsg.TournamentUsers tu ON tu.UserId = u.Id
+                      INNER JOIN tsg.Tournaments t ON t.Id = tu.TournamentId
+                      where u.Username = ? AND t.IsActive = 1 LIMIT 1`;
+
   db.query(getUserSql, [username], (err, rows) => {
     if (err) return res.send({ message: err });
     if (!rows[0]) return res.send({ message: invalidMessage });
@@ -118,6 +130,8 @@ app.post("/api/login", (req, res) => {
       userId: rows[0].Id,
       username: rows[0].Username,
       isAdmin: rows[0].IsAdmin,
+      tournamentName: rows[0].TournamentName,
+      tournamentId: rows[0].TournamentId,
     };
 
     const token = jwt.sign(user, process.env.REACT_APP_TOKEN_KEY, {
@@ -125,36 +139,22 @@ app.post("/api/login", (req, res) => {
     });
 
     res.send({
-      user: {
-        userId: rows[0].Id,
-        username: rows[0].Username,
-        isAdmin: rows[0].IsAdmin,
-      },
+      user,
       token: token,
     });
   });
 });
 
-app.get("/api/matches", (req, res) => {
+app.get("/api/matchpredictions", (req, res) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
+  const user = getUser(token);
 
-  let userId = null;
-
-  if (!token) {
-    return res.status(403).send("You are forbidden from accessing this page.");
+  if (!user) {
+    return res.status(401).send("You are unauthorised to access this page.");
   }
 
-  try {
-    const decoded = jwt.verify(token, process.env.REACT_APP_TOKEN_KEY);
-    userId = decoded.userId;
-  } catch (err) {
-    return res.status(401).send("Invalid Token");
-  }
-
-  const tournamentId = req.query.tournamentId;
-
-  const sql = `SELECT
+  const matchesSql = `SELECT
       m.Id as MatchId,
       mg.Identifier as MatchGroup,
       t1.Name as Team1,
@@ -176,29 +176,40 @@ app.get("/api/matches", (req, res) => {
     ORDER BY
       mg.Id, m.Id`;
 
-  db.query(sql, [userId, tournamentId], (err, rows) => {
-    res.send(rows);
+  const predictions = {};
+  db.query(matchesSql, [user.userId, user.tournamentId], (err, rows) => {
+    predictions.matches = rows;
+
+    const tieBreakSql = `SELECT t.TieBreakQuestion, tu.TieBreakAnswer
+    FROM Tournaments t
+    INNER JOIN TournamentUsers tu ON tu.TournamentId = t.Id
+    WHERE t.Id = ? AND tu.UserId = ?`;
+    db.query(tieBreakSql, [user.tournamentId, user.userId], (err, rows) => {
+      predictions.tieBreakQuestion = rows[0].TieBreakQuestion;
+      predictions.tieBreakAnswer = rows[0].TieBreakAnswer;
+
+      res.send(predictions);
+    });
   });
+
+  // res.send({
+  //   predictions: {
+  //     matches: predictions.matches,
+  //     tieBreakQuestion: predictions.TieBreakQuestion,
+  //     tieBreakAnswer: predictions.tieBreakAnswer,
+  //   },
+  // });
 });
 
-app.post("/api/guesses", (req, res) => {
+app.post("/api/matchpredictions", (req, res) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
+  const user = getUser(token);
 
-  let userId = null;
-
-  if (!token) {
-    return res.status(403).send("You are forbidden from accessing this page.");
+  if (!user) {
+    return res.status(401).send("You are unauthorised to access this page.");
   }
 
-  try {
-    const decoded = jwt.verify(token, process.env.REACT_APP_TOKEN_KEY);
-    userId = decoded.userId;
-  } catch (err) {
-    return res.status(401).send("Invalid Token");
-  }
-
-  const tournamentId = req.query.tournamentId;
   const matches = req.body.matches;
   const tieBreakAnswer = req.body.tieBreakAnswer;
 
@@ -207,50 +218,40 @@ app.post("/api/guesses", (req, res) => {
     matches.forEach((x) => {
       const sql = `INSERT INTO UserMatchGuesses (UserId, MatchId, Team1Goals, Team2Goals, UserScore)
                     VALUES (?,?,?,?,NULL)`;
-      db.query(sql, [userId, x.MatchId, x.Team1Goals, x.Team2Goals]);
+      db.query(sql, [user.userId, x.MatchId, x.Team1Goals, x.Team2Goals]);
     });
   } else {
     matches.forEach((x) => {
       const sql = `UPDATE UserMatchGuesses
       SET Team1Goals = ?, Team2Goals = ?
       WHERE UserId = ? AND MatchId = ?`;
-      db.query(sql, [x.Team1Goals, x.Team2Goals, userId, x.MatchId]);
+      db.query(sql, [x.Team1Goals, x.Team2Goals, user.userId, x.MatchId]);
     });
   }
 
   const sql = `UPDATE TournamentUsers SET TieBreakAnswer = ? WHERE TournamentId = ? AND userId = ?`;
-  db.query(sql, [tieBreakAnswer, tournamentId, userId]);
+  db.query(sql, [tieBreakAnswer, user.tournamentId, user.userId]);
 
   res.end();
 });
 
-app.get("/api/tournament", (req, res) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+// app.get("/api/tournament", (req, res) => {
+//   const authHeader = req.headers["authorization"];
+//   const token = authHeader && authHeader.split(" ")[1];
+//   const user = getUser(token);
 
-  let userId = null;
+//   if (!user) {
+//     return res.status(401).send("You are unauthorised to access this page.");
+//   }
 
-  if (!token) {
-    return res.status(403).send("You are forbidden from accessing this page.");
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.REACT_APP_TOKEN_KEY);
-    userId = decoded.userId;
-  } catch (err) {
-    return res.status(401).send("Invalid Token");
-  }
-
-  const tournamentId = req.query.tournamentId;
-
-  const sql = `SELECT t.Name, t.TieBreakQuestion, tu.TieBreakAnswer
-                FROM Tournaments t
-                INNER JOIN TournamentUsers tu ON tu.TournamentId = t.Id
-                WHERE t.Id = ? AND tu.UserId = ?`;
-  db.query(sql, [tournamentId, userId], (err, rows) => {
-    res.send(rows[0]);
-  });
-});
+//   const sql = `SELECT t.Name, t.TieBreakQuestion, tu.TieBreakAnswer
+//                 FROM Tournaments t
+//                 INNER JOIN TournamentUsers tu ON tu.TournamentId = t.Id
+//                 WHERE t.Id = ? AND tu.UserId = ?`;
+//   db.query(sql, [user.tournamentId, user.userId], (err, rows) => {
+//     res.send(rows[0]);
+//   });
+// });
 
 app.listen(3001, () => {
   console.log("running on port 3001");

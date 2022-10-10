@@ -1,7 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import InitialPredictions from "./components/initial-predictions";
-import RequireAuth from "./components/require-auth";
+import Leaderboard from "./components/leaderboard";
+import Scores from "./components/scores";
 import Login from "./components/user/login";
 import Register from "./components/user/register";
 import { AuthProvider } from "./utils/auth";
@@ -14,6 +15,8 @@ const App = () => {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/initialpredictions" element={<InitialPredictions />} />
+          <Route path="/scores" element={<Scores />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>
       </div>
     </AuthProvider>

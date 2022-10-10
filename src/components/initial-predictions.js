@@ -6,37 +6,24 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 import { useAuth } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import NavigationBar from "./navigation-bar";
 
 const InitialPredictions = () => {
-  const [tournament, setTournament] = useState();
-  const [matches, setMatches] = useState([]);
+  const [predictions, setPredictions] = useState({});
 
   const auth = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    Axios.get(`http://localhost:3001/api/tournament?tournamentId=1`, {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((response) => {
-        setTournament(response.data);
-      })
-      .catch(() => {
-        navigate("/");
-      });
-  }, []);
-
-  useEffect(() => {
-    Axios.get(`http://localhost:3001/api/matches?tournamentId=1`, {
+    Axios.get(`http://localhost:3001/api/matchpredictions`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     })
       .then((response) => {
         // setMatches(response.data);
-        setMatches(response.data);
+        console.log(response);
+        setPredictions(response.data);
       })
       .catch(() => {
         navigate("/");
@@ -45,7 +32,7 @@ const InitialPredictions = () => {
 
   const submit = () => {
     let isValid = true;
-    const isInsert = !matches[0].UserMatchGuessId;
+    const isInsert = !predictions.matches[0].UserMatchGuessId;
     const team1GoalInputs = document.getElementsByName("team-1-goals");
     team1GoalInputs.forEach((i) => {
       const value = i.value;
@@ -54,7 +41,8 @@ const InitialPredictions = () => {
         return;
       }
       const matchId = +i.id.split(" ").pop();
-      matches.filter((m) => m.MatchId === matchId)[0].Team1Goals = +value;
+      predictions.matches.filter((m) => m.MatchId === matchId)[0].Team1Goals =
+        +value;
     });
 
     const team2GoalInputs = document.getElementsByName("team-2-goals");
@@ -65,7 +53,8 @@ const InitialPredictions = () => {
         return;
       }
       const matchId = +i.id.split(" ").pop();
-      matches.filter((m) => m.MatchId === matchId)[0].Team2Goals = +value;
+      predictions.matches.filter((m) => m.MatchId === matchId)[0].Team2Goals =
+        +value;
     });
 
     const tieBreakValue = document.getElementById("tie-break").value;
@@ -78,9 +67,9 @@ const InitialPredictions = () => {
     }
 
     Axios.post(
-      "http://localhost:3001/api/guesses?tournamentId=1",
+      "http://localhost:3001/api/matchpredictions",
       {
-        matches: matches,
+        matches: predictions.matches,
         tieBreakAnswer: tieBreakValue,
       },
       {
@@ -113,15 +102,14 @@ const InitialPredictions = () => {
   };
 
   return (
-    <div className="App">
-      <h2 className="p-3">
-        {tournament?.Name} - Predictions - {auth.user?.username}
-      </h2>
+    <>
+      <NavigationBar activeKey="predictions" />
+      <h2 className="p-3">{auth.user?.tournamentName} - Predictions</h2>
 
       <Form className="form">
         <Container fluid>
-          {matches.length > 0
-            ? groupBy(matches, "MatchGroup").map((g) => {
+          {predictions && predictions.matches?.length > 0
+            ? groupBy(predictions.matches, "MatchGroup").map((g) => {
                 return (
                   <Row className="mx-auto" key={g.key}>
                     <Col className="mx-auto p-2" md="10" lg="4">
@@ -213,7 +201,7 @@ const InitialPredictions = () => {
                 );
               })
             : null}
-          {tournament ? (
+          {predictions?.tieBreakQuestion ? (
             <Row className="mx-auto">
               <Col className="mx-auto p-1" md="10" lg="4">
                 <Card>
@@ -222,7 +210,7 @@ const InitialPredictions = () => {
                     <Row>
                       <Col>
                         <label className="p-2">
-                          {tournament.TieBreakQuestion}
+                          {predictions.tieBreakQuestion}
                         </label>
                         <input
                           style={{ width: "50px" }}
@@ -230,7 +218,7 @@ const InitialPredictions = () => {
                           min="0"
                           max="1000"
                           id="tie-break"
-                          defaultValue={tournament.TieBreakAnswer}
+                          defaultValue={predictions.tieBreakAnswer}
                         />
                       </Col>
                     </Row>
@@ -243,11 +231,8 @@ const InitialPredictions = () => {
         <Button className="m-3" onClick={submit}>
           Submit
         </Button>
-        <Button className="m-3" onClick={auth.logout}>
-          Logout
-        </Button>
       </Form>
-    </div>
+    </>
   );
 };
 
