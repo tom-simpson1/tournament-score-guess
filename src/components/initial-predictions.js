@@ -16,14 +16,12 @@ const InitialPredictions = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Axios.get(`http://localhost:3001/api/matchpredictions`, {
+    Axios.get(`http://localhost:3001/api/predictions`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     })
       .then((response) => {
-        // setMatches(response.data);
-        console.log(response);
         setPredictions(response.data);
       })
       .catch(() => {
@@ -68,7 +66,7 @@ const InitialPredictions = () => {
     }
 
     Axios.post(
-      "http://localhost:3001/api/matchpredictions",
+      "http://localhost:3001/api/predictions",
       {
         matches: predictions.matches,
         tieBreakAnswer: tieBreakValue,
@@ -105,7 +103,7 @@ const InitialPredictions = () => {
   return (
     <>
       <NavigationBar activeKey="predictions" />
-      {/* <h2 className="p-3">{auth.user?.tournamentName} - Predictions</h2> */}
+      <h2 className="p-3">{auth.user?.tournamentName} - Predictions</h2>
 
       <Form className="form py-3">
         <Container fluid>
@@ -158,7 +156,7 @@ const InitialPredictions = () => {
                                         type="number"
                                         min="0"
                                         max="99"
-                                        id={`team-1-goals ${m.MatchId}`}
+                                        id={`team-2-goals ${m.MatchId}`}
                                         name="team-2-goals"
                                         defaultValue={m.Team2Goals}
                                       />

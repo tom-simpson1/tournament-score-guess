@@ -117,3 +117,42 @@ body {
   width: 100%;
   height: 100%;
 }
+
+.score-box {
+  border: black;
+  border-style: solid;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 5px;
+  border-width: 1px;
+  display: inline-block;
+  width: 30px;
+  height: 25px;
+}
+
+.correct-score {
+  background-color: lightgreen;
+}
+
+.correct-result {
+  background-color: lightsalmon;
+}
+
+.incorrect-result {
+  background-color: #fc7474;
+}
+
+.correct-score-points {
+  color: green;
+  font-weight: bold;
+}
+
+.correct-result-points {
+  color: darkorange;
+  font-weight: bold;
+}
+
+.incorrect-result-points {
+  color: red;
+  font-weight: bold;
+}

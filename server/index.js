@@ -7,6 +7,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+const CORRECT_SCORE_POINTS = 3;
+const CORRECT_RESULT_POINTS = 1;
+
 const db = mysql.createPool({
   host: "tsg-db.cscjhbruzusj.eu-west-2.rds.amazonaws.com",
   user: "admin",
@@ -145,7 +148,7 @@ app.post("/api/login", (req, res) => {
   });
 });
 
-app.get("/api/matchpredictions", (req, res) => {
+app.get("/api/predictions", (req, res) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   const user = getUser(token);
@@ -201,7 +204,7 @@ app.get("/api/matchpredictions", (req, res) => {
   // });
 });
 
-app.post("/api/matchpredictions", (req, res) => {
+app.post("/api/predictions", (req, res) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   const user = getUser(token);
@@ -233,6 +236,57 @@ app.post("/api/matchpredictions", (req, res) => {
   db.query(sql, [tieBreakAnswer, user.tournamentId, user.userId]);
 
   res.end();
+});
+
+app.get("/api/scores", (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  const user = getUser(token);
+
+  if (!user) {
+    return res.status(401).send("You are unauthorised to access this page.");
+  }
+
+  const matchesSql = `SELECT
+                        m.Id as MatchId,
+                        mg.Identifier as MatchGroup,
+                        t1.Name as Team1,
+                        t2.Name as Team2,
+                        m.MatchTime,
+                        m.Team1Goals as Team1ActualGoals,
+                        m.Team2Goals as Team2ActualGoals,
+                        umg.Team1Goals as Team1PredictedGoals,
+                        umg.Team2Goals as Team2PredictedGoals,
+                        umg.UserScore,
+                        t1.IsPlaceholder as Team1IsPlaceholder,
+                        t2.IsPlaceholder as Team2IsPlaceholder
+                      FROM
+                        Matches m
+                        INNER JOIN MatchGroups mg ON mg.Id = m.MatchGroupId
+                        INNER JOIN Teams t1 ON t1.Id = m.Team1Id
+                        INNER JOIN Teams t2 ON t2.Id = m.Team2Id
+                        LEFT JOIN UserMatchGuesses umg ON umg.MatchId = m.Id
+                      WHERE
+                      umg.UserId = ? AND mg.TournamentId = ?
+                      ORDER BY
+                        m.MatchTime`;
+
+  const scores = {};
+
+  db.query(matchesSql, [user.userId, user.tournamentId], (err, rows) => {
+    scores.matches = rows;
+    scores.totalPoints = scores.matches
+      .map((x) => x.UserScore)
+      .reduce((a, b) => b + (a ?? 0), 0);
+
+    scores.correctScores = scores.matches.filter(
+      (x) => x.UserScore === CORRECT_SCORE_POINTS
+    ).length;
+    scores.correctResults = scores.matches.filter(
+      (x) => x.UserScore === CORRECT_RESULT_POINTS
+    ).length;
+    res.send(scores);
+  });
 });
 
 // app.get("/api/tournament", (req, res) => {

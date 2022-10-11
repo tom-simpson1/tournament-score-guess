@@ -75,11 +75,9 @@ function useAuthProvider() {
         salt,
       })
       .then((res) => {
-        console.log("Register Result: ", res);
         if (res.data.message) {
           return res.data.message;
         }
-        console.log("Registration successful");
         navigate("/?registered=true");
       })
       .catch((err) => {
