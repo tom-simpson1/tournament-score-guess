@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import InitialPredictions from "./components/initial-predictions";
+import Footer from "./components/layout/footer";
 import Leaderboard from "./components/leaderboard";
 import Scores from "./components/scores";
 import Login from "./components/user/login";
@@ -10,7 +11,14 @@ import { AuthProvider } from "./utils/auth";
 const App = () => {
   return (
     <AuthProvider>
-      <div className="App" style={{ height: "100%", width: "100%" }}>
+      <div
+        className="App"
+        style={{
+          height: "100%",
+          minheight: "100%",
+          backgroundColor: "#f5f2f2",
+        }}
+      >
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -18,6 +26,7 @@ const App = () => {
           <Route path="/scores" element={<Scores />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>
+        <Footer />
       </div>
     </AuthProvider>
   );

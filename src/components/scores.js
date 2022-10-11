@@ -1,5 +1,5 @@
 import { useAuth } from "../utils/auth";
-import NavigationBar from "./navigation-bar";
+import NavigationBar from "./layout/navigation-bar";
 
 const Scores = () => {
   const auth = useAuth();

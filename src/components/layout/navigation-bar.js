@@ -1,6 +1,6 @@
-import { useAuth } from "../utils/auth";
+import { useAuth } from "../../utils/auth";
 
-const { Navbar, Container, Nav } = require("react-bootstrap");
+const { Navbar, Container, Nav, Row, Col } = require("react-bootstrap");
 
 const NavigationBar = (props) => {
   const auth = useAuth();
@@ -13,8 +13,12 @@ const NavigationBar = (props) => {
       variant="dark"
     >
       <Container>
-        {/* <Navbar.Brand href="/initialpredictions">Qatar 2022</Navbar.Brand> */}
         <Nav className="me-auto" activeKey={activeKey}>
+          {/* <Row> */}
+          {/* <Col xs="12" md="2">
+              <Navbar.Brand href="/initialpredictions">Qatar 2022</Navbar.Brand>
+            </Col> */}
+          {/* <Col> */}
           <Nav.Item>
             <Nav.Link href="/initialpredictions" eventKey="predictions">
               Predictions
@@ -33,6 +37,8 @@ const NavigationBar = (props) => {
           <Nav.Item>
             <Nav.Link onClick={auth.logout}>Logout</Nav.Link>
           </Nav.Item>
+          {/* </Col>
+          </Row> */}
         </Nav>
       </Container>
     </Navbar>

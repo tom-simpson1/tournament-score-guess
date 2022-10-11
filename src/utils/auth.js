@@ -35,7 +35,6 @@ function useAuthProvider() {
       return;
     }
 
-    console.log("Check User");
     await axios
       .get(`${api}/user`, {
         headers: {
@@ -43,12 +42,10 @@ function useAuthProvider() {
         },
       })
       .then((res) => {
-        console.log("Check Auth User:", res.data.user);
         setUser(res.data.user);
         return res;
       })
       .catch((err) => {
-        console.log(err);
         return err;
       });
   };
@@ -61,7 +58,6 @@ function useAuthProvider() {
         if (res.data.message) return res.data.message;
         localStorage.setItem("token", res.data.token);
         setUser(res.data.user);
-        console.log("Login User:", res.data.user);
         navigate("/initialpredictions");
       })
       .catch((err) => {
@@ -81,14 +77,12 @@ function useAuthProvider() {
       .then((res) => {
         console.log("Register Result: ", res);
         if (res.data.message) {
-          console.log(res.data.message);
           return res.data.message;
         }
         console.log("Registration successful");
-        navigate("/");
+        navigate("/?registered=true");
       })
       .catch((err) => {
-        console.log("Registration Error: ", err);
         return err;
       });
   };

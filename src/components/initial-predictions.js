@@ -6,7 +6,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 import { useAuth } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
-import NavigationBar from "./navigation-bar";
+import NavigationBar from "./layout/navigation-bar";
+import Footer from "./layout/footer";
 
 const InitialPredictions = () => {
   const [predictions, setPredictions] = useState({});
@@ -104,9 +105,9 @@ const InitialPredictions = () => {
   return (
     <>
       <NavigationBar activeKey="predictions" />
-      <h2 className="p-3">{auth.user?.tournamentName} - Predictions</h2>
+      {/* <h2 className="p-3">{auth.user?.tournamentName} - Predictions</h2> */}
 
-      <Form className="form">
+      <Form className="form py-3">
         <Container fluid>
           {predictions && predictions.matches?.length > 0
             ? groupBy(predictions.matches, "MatchGroup").map((g) => {
