@@ -13,11 +13,11 @@ const App = () => {
     <AuthProvider>
       <div
         className="App"
-        style={{
-          height: "100%",
-          minheight: "100%",
-          backgroundColor: "#f5f2f2",
-        }}
+        // style={{
+        //   height: "100vh",
+        //   minheight: "100%",
+        //   backgroundColor: "#f5f2f2",
+        // }}
       >
         <Routes>
           <Route path="/" element={<Login />} />

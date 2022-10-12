@@ -103,7 +103,7 @@ const InitialPredictions = () => {
   return (
     <>
       <NavigationBar activeKey="predictions" />
-      <h2 className="p-3">{auth.user?.tournamentName} - Predictions</h2>
+      <h2 className="pt-3">{auth.user?.tournamentName} - Predictions</h2>
 
       <Form className="form py-3">
         <Container fluid>

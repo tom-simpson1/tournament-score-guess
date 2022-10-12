@@ -1,6 +1,7 @@
 import Axios from "axios";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { Card, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/auth";
 import NavigationBar from "./layout/navigation-bar";
@@ -13,6 +14,31 @@ const Scores = () => {
 
   const CORRECT_SCORE_POINTS = 3;
   const CORRECT_RESULT_POINTS = 1;
+
+  const updateScore = (matchId) => {
+    const team1GoalsInput = document.getElementById(
+      `team-1-goals ${matchId}`
+    ).value;
+    const team2GoalsInput = document.getElementById(
+      `team-2-goals ${matchId}`
+    ).value;
+    let team1Goals = +team1GoalsInput;
+    let team2Goals = +team2GoalsInput;
+
+    if (
+      !team1GoalsInput ||
+      !team2GoalsInput ||
+      team1Goals < 0 ||
+      team2Goals < 0 ||
+      team1Goals > 99 ||
+      team2Goals > 99
+    ) {
+      alert("Please ensure scores entered are valid.");
+      return;
+    }
+
+    console.log(matchId, team1Goals, team2Goals);
+  };
 
   useEffect(() => {
     Axios.get(`http://localhost:3001/api/scores`, {
@@ -31,10 +57,28 @@ const Scores = () => {
   return (
     <>
       <NavigationBar activeKey="scores" />
-      <h2 className="p-3">{auth.user?.tournamentName} - Scores</h2>
+      <h2 className="pt-3">{auth.user?.tournamentName} - Scores</h2>
 
       <Form className="form py-3">
         <Container fluid>
+          <Row className="mx-auto">
+            <Col className="mx-auto p-2" md="10" lg="4">
+              <Card>
+                <Card.Header>Scores</Card.Header>
+                <Card.Body>
+                  <div>
+                    Correct Results: <b>{scores?.correctResults}</b>
+                  </div>
+                  <div>
+                    Correct Results: <b>{scores?.correctScores}</b>
+                  </div>
+                  <div>
+                    Total Points: <b>{scores?.totalPoints}</b>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
           {scores && scores.matches?.length > 0
             ? scores.matches.map((m) => {
                 let boxStyle = "",
@@ -135,7 +179,53 @@ const Scores = () => {
                               </Container>
                             </Col>
                           </Row>
+                          <Row>
+                            <div>
+                              <small>{m.MatchGroup}</small>
+                            </div>
+                            <div>
+                              <small>
+                                {format(
+                                  new Date(m.MatchTime),
+                                  "dd/MM/yyyy HH:mm:ss"
+                                )}
+                              </small>
+                            </div>
+                          </Row>
                         </Card.Body>
+                        {auth.user?.isAdmin ? (
+                          <Card.Footer>
+                            <Row>
+                              <Col className="p-2 m-0">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="99"
+                                  id={`team-1-goals ${m.MatchId}`}
+                                  name="team-1-goals"
+                                />
+                                {"  -  "}
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="99"
+                                  id={`team-2-goals ${m.MatchId}`}
+                                  name="team-2-goals"
+                                />
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col>
+                                <Button
+                                  className="m-3"
+                                  onClick={() => updateScore(m.MatchId)}
+                                >
+                                  Update Score
+                                </Button>
+                              </Col>
+                            </Row>
+                          </Card.Footer>
+                        ) : null}
                       </Card>
                     </Col>
                   </Row>

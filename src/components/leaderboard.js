@@ -7,7 +7,7 @@ const Leaderboard = () => {
   return (
     <>
       <NavigationBar activeKey="leaderboard" />
-      <h2 className="p-3">{auth.user?.tournamentName} - Leaderboard</h2>
+      <h2 className="pt-3">{auth.user?.tournamentName} - Leaderboard</h2>
     </>
   );
 };
