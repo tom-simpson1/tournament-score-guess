@@ -13,7 +13,7 @@ const CORRECT_RESULT_POINTS = 1;
 const db = mysql.createPool({
   host: "tsg-db.cscjhbruzusj.eu-west-2.rds.amazonaws.com",
   user: "admin",
-  password: "Xsw27xs4e$",
+  password: process.env.REACT_APP_DB_PASSWORD,
   database: "tsg",
 });
 
