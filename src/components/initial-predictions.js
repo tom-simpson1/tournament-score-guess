@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react";
 import "../App.css";
 import Axios from "axios";
-import { Row, Col, Button, Form, Card, Container } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Button,
+  Form,
+  Card,
+  Container,
+  Alert,
+} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 import { useAuth } from "../utils/auth";
@@ -11,6 +19,7 @@ import Footer from "./layout/footer";
 
 const InitialPredictions = () => {
   const [predictions, setPredictions] = useState({});
+  const [showRules, setShowRules] = useState(true);
 
   const auth = useAuth();
   const navigate = useNavigate();
@@ -107,22 +116,25 @@ const InitialPredictions = () => {
 
       <Form className="form py-3">
         <Container fluid>
-          <Row className="mx-auto">
-            <Col className="mx-auto p-2" md="10" lg="4">
-              <Card>
-                <Card.Header>Rules</Card.Header>
-                <Card.Body>
+          {showRules ? (
+            <Row className="mx-auto">
+              <Col className="mx-auto p-2" md="10" lg="4">
+                <Alert
+                  variant="info"
+                  dismissible
+                  onClose={() => setShowRules(false)}
+                >
+                  <Alert.Heading>Rules</Alert.Heading>
                   <p>
                     All scores are for normal time - extra time and penalties
                     don't count. <br />
                     You can submit and update your predictions up until the day
                     before the tournament starts.
-                    <br />
                   </p>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+                </Alert>
+              </Col>
+            </Row>
+          ) : null}
           {predictions && predictions.matches?.length > 0
             ? groupBy(predictions.matches, "MatchGroup").map((g) => {
                 return (
