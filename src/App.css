@@ -1,6 +1,5 @@
 .App {
   text-align: center;
-  background-color: #f0f1f5;
 }
 
 html,
@@ -134,19 +133,29 @@ body {
 }
 
 .correct-score {
-  background-color: lightgreen;
+  background-color: rgb(3, 184, 3);
+  font-weight: bold;
+  border-color: rgb(3, 184, 3);
+  color: white;
 }
 
 .correct-result {
-  background-color: lightsalmon;
+  color: rgb(3, 184, 3);
+  font-weight: bold;
+  border-color: rgb(3, 184, 3);
 }
 
 .incorrect-result {
-  background-color: #fc7474;
+  color: #f80606;
+  font-weight: bold;
+  border-color: red;
 }
 
 .final-score {
-  background-color: #61dafb;
+  background-color: rgb(16, 101, 212);
+  color: white;
+  font-weight: bold;
+  border-color: rgb(16, 101, 212);
 }
 
 .correct-score-points {
@@ -162,4 +171,8 @@ body {
 .incorrect-result-points {
   color: red;
   font-weight: bold;
+}
+
+.leaderboard thead {
+  background-color: white;
 }

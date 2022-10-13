@@ -37,7 +37,28 @@ const Scores = () => {
       return;
     }
 
-    console.log(matchId, team1Goals, team2Goals);
+    Axios.post(
+      "http://localhost:3001/api/score",
+      {
+        matchId,
+        team1Goals,
+        team2Goals,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    )
+      .then((res) => {
+        console.log(res);
+        alert("Scores updated.");
+      })
+      .catch((err) => {
+        alert(err);
+      });
+
+    window.location.reload(false);
   };
 
   useEffect(() => {
@@ -47,7 +68,6 @@ const Scores = () => {
       },
     })
       .then((response) => {
-        console.log(response);
         setScores(response.data);
       })
       .catch(() => {
@@ -67,13 +87,13 @@ const Scores = () => {
                 <Card.Header>Scores</Card.Header>
                 <Card.Body>
                   <div>
-                    Correct Results: <b>{scores?.correctResults}</b>
-                  </div>
-                  <div>
-                    Correct Results: <b>{scores?.correctScores}</b>
-                  </div>
-                  <div>
                     Total Points: <b>{scores?.totalPoints}</b>
+                  </div>
+                  <div>
+                    Correct Scores: <b>{scores?.correctScores}</b>
+                  </div>
+                  <div>
+                    Correct Results: <b>{scores?.correctResults}</b>
                   </div>
                 </Card.Body>
               </Card>
@@ -110,7 +130,7 @@ const Scores = () => {
                       <Card>
                         <Card.Header>
                           {pointsText}
-                          {m.UserScore ? (
+                          {m.UserScore !== null && m.UserScore !== undefined ? (
                             <span className={pointsStyle}>
                               {m.UserScore}pts
                             </span>
@@ -150,12 +170,32 @@ const Scores = () => {
                               </div>
                               <small>Final Score</small>
                               <div>
-                                <span className={`score-box ${boxStyle}`}>
-                                  {m.Team1ActualGoals ?? "?"}
+                                <span
+                                  className={`score-box ${
+                                    m.Team1ActualGoals !== null &&
+                                    m.Team1ActualGoals !== undefined
+                                      ? "final-score"
+                                      : ""
+                                  }`}
+                                >
+                                  {m.Team1ActualGoals !== null &&
+                                  m.Team1ActualGoals !== undefined
+                                    ? m.Team1ActualGoals
+                                    : "?"}
                                 </span>
                                 <span> - </span>
-                                <span className={`score-box ${boxStyle}`}>
-                                  {m.Team2ActualGoals ?? "?"}
+                                <span
+                                  className={`score-box ${
+                                    m.Team2ActualGoals !== null &&
+                                    m.Team2ActualGoals !== undefined
+                                      ? "final-score"
+                                      : ""
+                                  }`}
+                                >
+                                  {m.Team2ActualGoals !== null &&
+                                  m.Team2ActualGoals !== undefined
+                                    ? m.Team2ActualGoals
+                                    : "?"}
                                 </span>
                               </div>
                             </Col>

@@ -289,6 +289,86 @@ app.get("/api/scores", (req, res) => {
   });
 });
 
+app.post("/api/score", (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  const user = getUser(token);
+
+  if (!user) {
+    return res.status(401).send("You are unauthorised to access this page.");
+  } else if (!user.isAdmin) {
+    return res.status(403).send("You are unauthorised to access this page.");
+  }
+
+  const matchId = req.body.matchId;
+  const team1Goals = req.body.team1Goals;
+  const team2Goals = req.body.team2Goals;
+
+  const actualScoreSql = `UPDATE Matches SET Team1Goals = ?, Team2Goals = ? WHERE Id = ?`;
+  db.query(actualScoreSql, [team1Goals, team2Goals, matchId], (err) => {
+    if (err) return res.send({ message: err });
+
+    console.log("Updating scores");
+
+    const userScoresSql = `UPDATE UserMatchGuesses
+    SET UserScore = CASE 
+      WHEN Team1Goals = ? AND Team2Goals = ? THEN ?
+      WHEN (? > ? AND Team1Goals > Team2Goals)
+      OR (? < ? AND Team1Goals < Team2Goals)
+      OR (? = ? AND Team1Goals = Team2Goals) THEN ?
+      ELSE 0 END
+    WHERE MatchId = ?;`;
+    db.query(
+      userScoresSql,
+      [
+        team1Goals,
+        team2Goals,
+        CORRECT_SCORE_POINTS,
+        team1Goals,
+        team2Goals,
+        team1Goals,
+        team2Goals,
+        team1Goals,
+        team2Goals,
+        CORRECT_RESULT_POINTS,
+        matchId,
+      ],
+      (err) => {
+        if (err) return res.send({ message: err });
+      }
+    );
+  });
+});
+
+app.get("/api/leaderboard", (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  const user = getUser(token);
+
+  if (!user) {
+    return res.status(401).send("You are unauthorised to access this page.");
+  }
+
+  const sql = `SELECT
+                  u.Username,
+                  SUM(umg.UserScore) as TotalPoints
+                FROM
+                  tsg.UserMatchGuesses umg
+                    INNER JOIN tsg.Users u ON u.Id = umg.UserId
+                    INNER JOIN tsg.Matches m ON m.Id = umg.MatchId
+                    INNER JOIN tsg.MatchGroups mg ON mg.Id = m.MatchGroupId
+                WHERE
+                  mg.TournamentId = ?
+                GROUP BY
+                  u.Username
+                ORDER BY
+                  TotalPoints DESC, Username`;
+  db.query(sql, [user.tournamentId], (err, rows) => {
+    if (err) return res.send({ message: err });
+    res.send(rows);
+  });
+});
+
 // app.get("/api/tournament", (req, res) => {
 //   const authHeader = req.headers["authorization"];
 //   const token = authHeader && authHeader.split(" ")[1];
