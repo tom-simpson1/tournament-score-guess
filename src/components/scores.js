@@ -1,13 +1,26 @@
 import Axios from "axios";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/auth";
 import NavigationBar from "./layout/navigation-bar";
 
+const useScroll = () => {
+  const elRef = useRef(null);
+  const executeScroll = () => {
+    if (elRef.current) {
+      elRef.current.scrollIntoView();
+    }
+  };
+
+  return [executeScroll, elRef];
+};
+
 const Scores = () => {
   const [scores, setScores] = useState({});
+
+  const [executeScroll, elRef] = useScroll();
 
   const auth = useAuth();
   const navigate = useNavigate();
@@ -74,6 +87,9 @@ const Scores = () => {
         navigate("/");
       });
   }, []);
+
+  useEffect(executeScroll, [scores]);
+
   return (
     <>
       <NavigationBar activeKey="scores" />
@@ -100,7 +116,7 @@ const Scores = () => {
             </Col>
           </Row>
           {scores && scores.matches?.length > 0
-            ? scores.matches.map((m) => {
+            ? scores.matches.map((m, idx) => {
                 let boxStyle = "",
                   pointsStyle = "",
                   pointsText = "";
@@ -129,150 +145,167 @@ const Scores = () => {
                     break;
                 }
                 return (
-                  <Row className="mx-auto" key={`match${m.MatchId}`}>
-                    <Col className="mx-auto p-2" md="10" lg="4">
-                      <Card>
-                        <Card.Header>
-                          {pointsText}
-                          {m.UserScore !== null && m.UserScore !== undefined ? (
-                            <span className={pointsStyle}>
-                              {m.UserScore}pts
-                            </span>
-                          ) : null}
-                        </Card.Header>
-                        <Card.Body>
-                          <Row style={{ alignItems: "center" }}>
-                            <Col>
-                              <Container fluid>
-                                <Row>
-                                  <Col className="p-0 m-0" xs="12">
-                                    <img
-                                      src={`/images/country-flags/${
-                                        !m.Team1IsPlaceholder
-                                          ? m.Team1
-                                          : "Placeholder"
-                                      }.png`}
-                                      alt={`${m.Team1} Flag`}
-                                    />
-                                  </Col>
-                                  <Col className="p-0">
-                                    <label>{m.Team1}</label>
-                                  </Col>
-                                </Row>
-                              </Container>
-                            </Col>
-                            <Col xs="3" className="p-0 m-0">
-                              <small>You Predicted</small>
-                              <div>
-                                <span className={`score-box ${boxStyle}`}>
-                                  {m.Team1PredictedGoals}
-                                </span>
-                                {" - "}
-                                <span className={`score-box ${boxStyle}`}>
-                                  {m.Team2PredictedGoals}
-                                </span>
-                              </div>
-                              <small>Final Score</small>
-                              <div>
-                                <span
-                                  className={`score-box ${
-                                    m.Team1ActualGoals !== null &&
-                                    m.Team1ActualGoals !== undefined
-                                      ? "final-score"
-                                      : ""
-                                  }`}
-                                >
-                                  {m.Team1ActualGoals !== null &&
-                                  m.Team1ActualGoals !== undefined
-                                    ? m.Team1ActualGoals
-                                    : "?"}
-                                </span>
-                                <span> - </span>
-                                <span
-                                  className={`score-box ${
-                                    m.Team2ActualGoals !== null &&
-                                    m.Team2ActualGoals !== undefined
-                                      ? "final-score"
-                                      : ""
-                                  }`}
-                                >
-                                  {m.Team2ActualGoals !== null &&
-                                  m.Team2ActualGoals !== undefined
-                                    ? m.Team2ActualGoals
-                                    : "?"}
-                                </span>
-                              </div>
-                            </Col>
-                            <Col>
-                              <Container fluid>
-                                <Row>
-                                  <Col className="p-0 m-0" xs="12">
-                                    <img
-                                      src={`/images/country-flags/${
-                                        !m.Team2IsPlaceholder
-                                          ? m.Team2
-                                          : "Placeholder"
-                                      }.png`}
-                                      alt={`${m.Team2} Flag`}
-                                    />
-                                  </Col>
-                                  <Col className="p-0">
-                                    <label>{m.Team2}</label>
-                                  </Col>
-                                </Row>
-                              </Container>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <div>
-                              <small>{m.MatchGroup}</small>
-                            </div>
-                            <div>
-                              <small>
-                                {format(
-                                  new Date(m.MatchTime),
-                                  "dd/MM/yyyy HH:mm:ss"
-                                )}
-                              </small>
-                            </div>
-                          </Row>
-                        </Card.Body>
-                        {auth.user?.isAdmin ? (
-                          <Card.Footer>
-                            <Row>
-                              <Col className="p-2 m-0">
-                                <input
-                                  type="number"
-                                  min="0"
-                                  max="99"
-                                  id={`team-1-goals ${m.MatchId}`}
-                                  name="team-1-goals"
-                                />
-                                {"  -  "}
-                                <input
-                                  type="number"
-                                  min="0"
-                                  max="99"
-                                  id={`team-2-goals ${m.MatchId}`}
-                                  name="team-2-goals"
-                                />
-                              </Col>
-                            </Row>
-                            <Row>
+                  <div
+                    style={{ position: "relative" }}
+                    key={`match${m.MatchId}`}
+
+                    //ref={m.MatchId === 7 ? elRef : null}
+                  >
+                    <div
+                      ref={
+                        m.UserScore !== null &&
+                        scores.matches[idx + 1]?.UserScore === null
+                          ? elRef
+                          : null
+                      }
+                      style={{ position: "absolute", top: "-80px", left: "0" }}
+                    ></div>
+                    <Row className="mx-auto">
+                      <Col className="mx-auto p-2" md="10" lg="4">
+                        <Card>
+                          <Card.Header>
+                            {pointsText}
+                            {m.UserScore !== null &&
+                            m.UserScore !== undefined ? (
+                              <span className={pointsStyle}>
+                                {m.UserScore}pts
+                              </span>
+                            ) : null}
+                          </Card.Header>
+                          <Card.Body>
+                            <Row style={{ alignItems: "center" }}>
                               <Col>
-                                <Button
-                                  className="m-3"
-                                  onClick={() => updateScore(m.MatchId)}
-                                >
-                                  Update Score
-                                </Button>
+                                <Container fluid>
+                                  <Row>
+                                    <Col className="p-0 m-0" xs="12">
+                                      <img
+                                        src={`/images/country-flags/${
+                                          !m.Team1IsPlaceholder
+                                            ? m.Team1
+                                            : "Placeholder"
+                                        }.png`}
+                                        alt={`${m.Team1} Flag`}
+                                      />
+                                    </Col>
+                                    <Col className="p-0">
+                                      <label>{m.Team1}</label>
+                                    </Col>
+                                  </Row>
+                                </Container>
+                              </Col>
+                              <Col xs="3" className="p-0 m-0">
+                                <small>You Predicted</small>
+                                <div>
+                                  <span className={`score-box ${boxStyle}`}>
+                                    {m.Team1PredictedGoals}
+                                  </span>
+                                  {" - "}
+                                  <span className={`score-box ${boxStyle}`}>
+                                    {m.Team2PredictedGoals}
+                                  </span>
+                                </div>
+                                <small>Final Score</small>
+                                <div>
+                                  <span
+                                    className={`score-box ${
+                                      m.Team1ActualGoals !== null &&
+                                      m.Team1ActualGoals !== undefined
+                                        ? "final-score"
+                                        : ""
+                                    }`}
+                                  >
+                                    {m.Team1ActualGoals !== null &&
+                                    m.Team1ActualGoals !== undefined
+                                      ? m.Team1ActualGoals
+                                      : "?"}
+                                  </span>
+                                  <span> - </span>
+                                  <span
+                                    className={`score-box ${
+                                      m.Team2ActualGoals !== null &&
+                                      m.Team2ActualGoals !== undefined
+                                        ? "final-score"
+                                        : ""
+                                    }`}
+                                  >
+                                    {m.Team2ActualGoals !== null &&
+                                    m.Team2ActualGoals !== undefined
+                                      ? m.Team2ActualGoals
+                                      : "?"}
+                                  </span>
+                                </div>
+                              </Col>
+                              <Col>
+                                <Container fluid>
+                                  <Row>
+                                    <Col className="p-0 m-0" xs="12">
+                                      <img
+                                        src={`/images/country-flags/${
+                                          !m.Team2IsPlaceholder
+                                            ? m.Team2
+                                            : "Placeholder"
+                                        }.png`}
+                                        alt={`${m.Team2} Flag`}
+                                      />
+                                    </Col>
+                                    <Col className="p-0">
+                                      <label>{m.Team2}</label>
+                                    </Col>
+                                  </Row>
+                                </Container>
                               </Col>
                             </Row>
-                          </Card.Footer>
-                        ) : null}
-                      </Card>
-                    </Col>
-                  </Row>
+                            <Row>
+                              <div>
+                                <small>{m.MatchGroup}</small>
+                              </div>
+                              <div>
+                                <small>
+                                  {format(
+                                    new Date(m.MatchTime),
+                                    "dd/MM/yyyy HH:mm:ss"
+                                  )}
+                                </small>
+                              </div>
+                            </Row>
+                          </Card.Body>
+                          {auth.user?.isAdmin ? (
+                            <Card.Footer>
+                              <Row>
+                                <Col className="p-2 m-0">
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    max="99"
+                                    id={`team-1-goals ${m.MatchId}`}
+                                    name="team-1-goals"
+                                  />
+                                  {"  -  "}
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    max="99"
+                                    id={`team-2-goals ${m.MatchId}`}
+                                    name="team-2-goals"
+                                  />
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col>
+                                  <Button
+                                    className="m-3"
+                                    onClick={() => updateScore(m.MatchId)}
+                                  >
+                                    Update Score
+                                  </Button>
+                                </Col>
+                              </Row>
+                            </Card.Footer>
+                          ) : null}
+                        </Card>
+                      </Col>
+                    </Row>
+                  </div>
                 );
               })
             : null}

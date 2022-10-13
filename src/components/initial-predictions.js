@@ -130,6 +130,12 @@ const InitialPredictions = () => {
                     don't count. <br />
                     You can submit and update your predictions up until the day
                     before the tournament starts.
+                    <br />
+                    Correct score - 3 pts
+                    <br />
+                    Correct result - 1 pt
+                    <br />
+                    Incorrect result - 0pts
                   </p>
                 </Alert>
               </Col>

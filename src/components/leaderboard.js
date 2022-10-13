@@ -40,7 +40,10 @@ const Leaderboard = () => {
                 <th>Pts</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody
+              style={{ cursor: "pointer" }}
+              onClick={() => alert("clicked")}
+            >
               {data && data.length > 0
                 ? data.map((x, idx) => {
                     let pos = idx;
