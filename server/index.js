@@ -265,9 +265,9 @@ app.get("/api/scores", (req, res) => {
                         INNER JOIN MatchGroups mg ON mg.Id = m.MatchGroupId
                         INNER JOIN Teams t1 ON t1.Id = m.Team1Id
                         INNER JOIN Teams t2 ON t2.Id = m.Team2Id
-                        LEFT JOIN UserMatchGuesses umg ON umg.MatchId = m.Id
+                        LEFT JOIN UserMatchGuesses umg ON umg.MatchId = m.Id AND umg.UserId = ?
                       WHERE
-                      umg.UserId = ? AND mg.TournamentId = ?
+                         mg.TournamentId = ?
                       ORDER BY
                         m.MatchTime`;
 
@@ -307,8 +307,6 @@ app.post("/api/score", (req, res) => {
   const actualScoreSql = `UPDATE Matches SET Team1Goals = ?, Team2Goals = ? WHERE Id = ?`;
   db.query(actualScoreSql, [team1Goals, team2Goals, matchId], (err) => {
     if (err) return res.send({ message: err });
-
-    console.log("Updating scores");
 
     const userScoresSql = `UPDATE UserMatchGuesses
     SET UserScore = CASE 

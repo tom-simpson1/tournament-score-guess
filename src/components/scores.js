@@ -121,7 +121,11 @@ const Scores = () => {
                     pointsText = "Incorrect Result - ";
                     break;
                   default:
-                    pointsText = "Match TBP";
+                    pointsText =
+                      m.Team1ActualGoals !== null &&
+                      m.Team1ActualGoals !== undefined
+                        ? "No Score Submitted"
+                        : "Match TBP";
                     break;
                 }
                 return (

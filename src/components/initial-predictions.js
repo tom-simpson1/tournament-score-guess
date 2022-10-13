@@ -107,14 +107,30 @@ const InitialPredictions = () => {
 
       <Form className="form py-3">
         <Container fluid>
+          <Row className="mx-auto">
+            <Col className="mx-auto p-2" md="10" lg="4">
+              <Card>
+                <Card.Header>Rules</Card.Header>
+                <Card.Body>
+                  <p>
+                    All scores are for normal time - extra time and penalties
+                    don't count. <br />
+                    You can submit and update your predictions up until the day
+                    before the tournament starts.
+                    <br />
+                  </p>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
           {predictions && predictions.matches?.length > 0
             ? groupBy(predictions.matches, "MatchGroup").map((g) => {
                 return (
                   <Row className="mx-auto" key={g.key}>
                     <Col className="mx-auto p-2" md="10" lg="4">
                       <Card>
+                        <Card.Header className="px-0">{g.key}</Card.Header>
                         <Card.Body>
-                          <Card.Title className="px-0">{g.key}</Card.Title>
                           <Row>
                             {g.values.map((m) => {
                               return (
@@ -204,8 +220,8 @@ const InitialPredictions = () => {
             <Row className="mx-auto">
               <Col className="mx-auto p-1" md="10" lg="4">
                 <Card>
+                  <Card.Header className="px-0">Tie Break</Card.Header>
                   <Card.Body>
-                    <Card.Title className="px-0">Tie Break</Card.Title>
                     <Row>
                       <Col>
                         <label className="p-2">
