@@ -247,6 +247,8 @@ app.get("/api/scores", (req, res) => {
     return res.status(401).send("You are unauthorised to access this page.");
   }
 
+  const targetUserId = user.isAdmin ? req.query.userId : user.userId;
+
   const matchesSql = `SELECT
                         m.Id as MatchId,
                         mg.Identifier as MatchGroup,
@@ -273,7 +275,7 @@ app.get("/api/scores", (req, res) => {
 
   const scores = {};
 
-  db.query(matchesSql, [user.userId, user.tournamentId], (err, rows) => {
+  db.query(matchesSql, [targetUserId, user.tournamentId], (err, rows) => {
     scores.matches = rows;
     scores.totalPoints = scores.matches
       .map((x) => x.UserScore)
@@ -285,7 +287,12 @@ app.get("/api/scores", (req, res) => {
     scores.correctResults = scores.matches.filter(
       (x) => x.UserScore === CORRECT_RESULT_POINTS
     ).length;
-    res.send(scores);
+
+    const usernameSql = "SELECT Username FROM Users WHERE Id = ?";
+    db.query(usernameSql, [targetUserId], (err, rows) => {
+      scores.username = rows[0].Username;
+      res.send(scores);
+    });
   });
 });
 
@@ -348,6 +355,7 @@ app.get("/api/leaderboard", (req, res) => {
   }
 
   const sql = `SELECT
+                  u.Id as UserId,
                   u.Username,
                   SUM(umg.UserScore) as TotalPoints
                 FROM

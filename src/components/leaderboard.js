@@ -11,6 +11,12 @@ const Leaderboard = () => {
 
   const [data, setData] = useState([]);
 
+  const handleRowClick = (userId) => {
+    if (userId === auth.user.userId || auth.user.isAdmin) {
+      navigate(`/scores/${userId}`);
+    }
+  };
+
   useEffect(() => {
     Axios.get(`http://localhost:3001/api/leaderboard`, {
       headers: {
@@ -18,7 +24,6 @@ const Leaderboard = () => {
       },
     })
       .then((response) => {
-        console.log(response);
         setData(response.data);
       })
       .catch(() => {
@@ -40,10 +45,7 @@ const Leaderboard = () => {
                 <th>Pts</th>
               </tr>
             </thead>
-            <tbody
-              style={{ cursor: "pointer" }}
-              onClick={() => alert("clicked")}
-            >
+            <tbody style={{ cursor: "pointer" }}>
               {data && data.length > 0
                 ? data.map((x, idx) => {
                     let pos = idx;
@@ -66,6 +68,7 @@ const Leaderboard = () => {
                             : ""
                         }
                         key={`leaderboard-row-${idx}`}
+                        onClick={() => handleRowClick(x.UserId)}
                       >
                         <td>{pos}</td>
                         <td>{x.Username}</td>

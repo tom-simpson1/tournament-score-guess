@@ -2,7 +2,7 @@ import Axios from "axios";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../utils/auth";
 import useScroll from "../utils/useScroll";
 import NavigationBar from "./layout/navigation-bar";
@@ -14,6 +14,8 @@ const Scores = () => {
 
   const auth = useAuth();
   const navigate = useNavigate();
+
+  const { userId } = useParams();
 
   const CORRECT_SCORE_POINTS = 3;
   const CORRECT_RESULT_POINTS = 1;
@@ -65,7 +67,7 @@ const Scores = () => {
   };
 
   useEffect(() => {
-    Axios.get(`http://localhost:3001/api/scores`, {
+    Axios.get(`http://localhost:3001/api/scores?userId=${userId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
@@ -92,6 +94,9 @@ const Scores = () => {
               <Card>
                 <Card.Header>Scores</Card.Header>
                 <Card.Body>
+                  <div>
+                    Username: <b>{scores?.username}</b>
+                  </div>
                   <div>
                     Total Points: <b>{scores?.totalPoints}</b>
                   </div>
