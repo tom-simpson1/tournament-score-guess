@@ -1,21 +1,11 @@
 import Axios from "axios";
 import { format } from "date-fns";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/auth";
+import useScroll from "../utils/useScroll";
 import NavigationBar from "./layout/navigation-bar";
-
-const useScroll = () => {
-  const elRef = useRef(null);
-  const executeScroll = () => {
-    if (elRef.current) {
-      elRef.current.scrollIntoView();
-    }
-  };
-
-  return [executeScroll, elRef];
-};
 
 const Scores = () => {
   const [scores, setScores] = useState({});
