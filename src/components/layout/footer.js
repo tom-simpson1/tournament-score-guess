@@ -3,7 +3,7 @@ const Footer = () => {
     <div>
       <h4>Elliott CAN beat skin cancer #malignantmelanomore</h4>
       <img
-        style={{ width: "180px", height: "170px" }}
+        style={{ width: "180px", height: "220px" }}
         src="/images/elliott.jpg"
         alt="Elliott"
       />
