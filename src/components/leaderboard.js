@@ -59,7 +59,14 @@ const Leaderboard = () => {
                       }
                     }
                     return (
-                      <tr key={`leaderboard-row-${idx}`}>
+                      <tr
+                        className={
+                          x.Username === auth.user?.username
+                            ? `leaderboard-user-row`
+                            : ""
+                        }
+                        key={`leaderboard-row-${idx}`}
+                      >
                         <td>{pos}</td>
                         <td>{x.Username}</td>
                         <td>{x.TotalPoints}</td>

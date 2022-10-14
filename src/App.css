@@ -176,3 +176,7 @@ body {
 .leaderboard thead {
   background-color: white;
 }
+
+.leaderboard-user-row {
+  background-color: rgb(177, 210, 248);
+}
