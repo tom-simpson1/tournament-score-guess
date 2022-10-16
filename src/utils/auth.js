@@ -28,7 +28,6 @@ function useAuthProvider() {
   }, [user]);
 
   const checkAuth = async () => {
-    // console.log("token: ", localStorage.getItem("token"), user);
     // no token provided or user already checked prevents to make unwanted requests
 
     if (!localStorage.getItem("token") || user !== null) {

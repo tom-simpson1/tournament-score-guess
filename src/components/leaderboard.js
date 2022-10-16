@@ -72,7 +72,7 @@ const Leaderboard = () => {
                       >
                         <td>{pos}</td>
                         <td>{x.Username}</td>
-                        <td>{x.TotalPoints}</td>
+                        <td>{x.TotalPoints === null ? "-" : x.TotalPoints}</td>
                       </tr>
                     );
                   })

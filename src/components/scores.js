@@ -56,7 +56,6 @@ const Scores = () => {
       }
     )
       .then((res) => {
-        console.log(res);
         alert("Scores updated.");
       })
       .catch((err) => {
