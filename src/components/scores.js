@@ -20,7 +20,7 @@ const Scores = () => {
   const CORRECT_SCORE_POINTS = 3;
   const CORRECT_RESULT_POINTS = 1;
 
-  const api = process.env.REACT_APP_API_URL;
+  const api = "https://tournament-score-guess.herokuapp.com/api";
 
   const updateScore = (matchId) => {
     const team1GoalsInput = document.getElementById(

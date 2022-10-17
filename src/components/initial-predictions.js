@@ -24,7 +24,7 @@ const InitialPredictions = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const api = process.env.REACT_APP_API_URL;
+  const api = "https://tournament-score-guess.herokuapp.com/api";
 
   useEffect(() => {
     Axios.get(`${api}/predictions`, {

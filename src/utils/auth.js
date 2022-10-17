@@ -2,7 +2,7 @@ import React, { useState, useContext, createContext, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const api = process.env.REACT_APP_API_URL;
+const api = "https://tournament-score-guess.herokuapp.com/api";
 
 const authContext = createContext();
 
