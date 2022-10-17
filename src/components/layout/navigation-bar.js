@@ -14,18 +14,16 @@ const NavigationBar = (props) => {
     >
       <Container>
         <Nav className="me-auto" activeKey={activeKey}>
-          {/* <Row> */}
-          {/* <Col xs="12" md="2">
-              <Navbar.Brand href="/initialpredictions">Qatar 2022</Navbar.Brand>
-            </Col> */}
-          {/* <Col> */}
           <Nav.Item>
             <Nav.Link href="/initialpredictions" eventKey="predictions">
               Predictions
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="/scores" eventKey="scores">
+            <Nav.Link
+              href={`/scores?userId=${auth.user?.userId}`}
+              eventKey="scores"
+            >
               Scores
             </Nav.Link>
           </Nav.Item>
@@ -37,8 +35,6 @@ const NavigationBar = (props) => {
           <Nav.Item>
             <Nav.Link onClick={auth.logout}>Logout</Nav.Link>
           </Nav.Item>
-          {/* </Col>
-          </Row> */}
         </Nav>
       </Container>
     </Navbar>

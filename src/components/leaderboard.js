@@ -15,7 +15,7 @@ const Leaderboard = () => {
 
   const handleRowClick = (userId) => {
     if (userId === auth.user.userId || auth.user.isAdmin) {
-      navigate(`/scores/${userId}`);
+      navigate(`/scores?userId=${userId}`);
     }
   };
 

@@ -2,7 +2,7 @@ import Axios from "axios";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../utils/auth";
 import useScroll from "../utils/useScroll";
 import NavigationBar from "./layout/navigation-bar";
@@ -15,12 +15,9 @@ const Scores = () => {
   const [executeScroll, elRef] = useScroll();
 
   const auth = useAuth();
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  // const { userId } = useParams();
-  // console.log("UserId: ", userId);
-
-  const userId = 1;
+  const userId = searchParams.get("userId");
 
   const CORRECT_SCORE_POINTS = 3;
   const CORRECT_RESULT_POINTS = 1;
@@ -72,7 +69,7 @@ const Scores = () => {
   };
 
   useEffect(() => {
-    Axios.get(`${api}/scores?userId=${userId}`, {
+    Axios.get(`${api}/scores?userId=${userId ?? auth.user?.userId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
@@ -81,10 +78,7 @@ const Scores = () => {
         setScores(response.data);
         console.log(response.data);
       })
-      .catch((err) => {
-        console.log("Scores error: ", err);
-        navigate("/");
-      });
+      .catch((err) => {});
   }, []);
 
   useEffect(executeScroll, [scores]);
