@@ -20,6 +20,8 @@ const Scores = () => {
   const CORRECT_SCORE_POINTS = 3;
   const CORRECT_RESULT_POINTS = 1;
 
+  const api = process.env.REACT_APP_API_URL;
+
   const updateScore = (matchId) => {
     const team1GoalsInput = document.getElementById(
       `team-1-goals ${matchId}`
@@ -43,7 +45,7 @@ const Scores = () => {
     }
 
     Axios.post(
-      "http://localhost:3001/api/score",
+      `${api}/score`,
       {
         matchId,
         team1Goals,
@@ -57,16 +59,15 @@ const Scores = () => {
     )
       .then((res) => {
         alert("Scores updated.");
+        window.location.reload(false);
       })
       .catch((err) => {
         alert(err);
       });
-
-    window.location.reload(false);
   };
 
   useEffect(() => {
-    Axios.get(`http://localhost:3001/api/scores?userId=${userId}`, {
+    Axios.get(`${api}/scores?userId=${userId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },

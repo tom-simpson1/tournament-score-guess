@@ -11,6 +11,8 @@ const Leaderboard = () => {
 
   const [data, setData] = useState([]);
 
+  const api = process.env.REACT_APP_API_URL;
+
   const handleRowClick = (userId) => {
     if (userId === auth.user.userId || auth.user.isAdmin) {
       navigate(`/scores/${userId}`);
@@ -18,7 +20,7 @@ const Leaderboard = () => {
   };
 
   useEffect(() => {
-    Axios.get(`http://localhost:3001/api/leaderboard`, {
+    Axios.get(`${api}/leaderboard`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },

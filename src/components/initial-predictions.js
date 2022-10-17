@@ -24,8 +24,10 @@ const InitialPredictions = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
+  const api = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    Axios.get(`http://localhost:3001/api/predictions`, {
+    Axios.get(`${api}/predictions`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
