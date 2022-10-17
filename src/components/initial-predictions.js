@@ -87,14 +87,14 @@ const InitialPredictions = () => {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       }
-    );
-
-    alert(
-      `Your predictions were successfully ${
-        isInsert ? "submitted" : "updated"
-      }!`
-    );
-    window.location.reload(false);
+    ).then((res) => {
+      alert(
+        `Your predictions were successfully ${
+          isInsert ? "submitted" : "updated"
+        }!`
+      );
+      window.location.reload(false);
+    });
   };
 
   const groupBy = (xs, key) => {
