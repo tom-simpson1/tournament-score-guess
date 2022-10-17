@@ -54,20 +54,6 @@ const Register = () => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
 
-    // Axios.post("http://localhost:3001/api/register", {
-    //   code: code,
-    //   username: username,
-    //   email: email,
-    //   password: hashedPassword,
-    //   salt: salt,
-    // }).then((res) => {
-    //   if (!res.data || res.data === {} || res.data.message) {
-    //     setError(res.data?.message ?? "Something went wrong.");
-    //   } else {
-    //     auth.login(res.data.user);
-    //     navigate("/initialpredictions");
-    //   }
-    // });
     auth.register(code, username, email, hashedPassword, salt).then((res) => {
       if (res) setError(res);
     });

@@ -77,7 +77,7 @@ const InitialPredictions = () => {
     }
 
     Axios.post(
-      "http://localhost:3001/api/predictions",
+      `${api}/predictions`,
       {
         matches: predictions.matches,
         tieBreakAnswer: tieBreakValue,
