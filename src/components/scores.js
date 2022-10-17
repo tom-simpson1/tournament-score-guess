@@ -17,8 +17,10 @@ const Scores = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const { userId } = useParams();
-  console.log("UserId: ", userId);
+  // const { userId } = useParams();
+  // console.log("UserId: ", userId);
+
+  const userId = 1;
 
   const CORRECT_SCORE_POINTS = 3;
   const CORRECT_RESULT_POINTS = 1;
