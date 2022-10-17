@@ -8,6 +8,8 @@ import useScroll from "../utils/useScroll";
 import NavigationBar from "./layout/navigation-bar";
 
 const Scores = () => {
+  console.log("Scores page hit!");
+
   const [scores, setScores] = useState({});
 
   const [executeScroll, elRef] = useScroll();
@@ -16,6 +18,7 @@ const Scores = () => {
   const navigate = useNavigate();
 
   const { userId } = useParams();
+  console.log("UserId: ", userId);
 
   const CORRECT_SCORE_POINTS = 3;
   const CORRECT_RESULT_POINTS = 1;
@@ -74,8 +77,10 @@ const Scores = () => {
     })
       .then((response) => {
         setScores(response.data);
+        console.log(response.data);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("Scores error: ", err);
         navigate("/");
       });
   }, []);
