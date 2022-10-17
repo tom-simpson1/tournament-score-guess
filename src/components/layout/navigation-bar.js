@@ -25,7 +25,7 @@ const NavigationBar = (props) => {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href={`/scores/${auth.user?.userId}`} eventKey="scores">
+            <Nav.Link href="/scores/1" eventKey="scores">
               Scores
             </Nav.Link>
           </Nav.Item>
