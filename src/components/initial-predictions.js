@@ -133,9 +133,9 @@ const InitialPredictions = () => {
                     You can submit and update your predictions up until the day
                     before the tournament starts.
                     <br />
-                    Correct score - 3 pts
+                    Correct score - 3pts
                     <br />
-                    Correct result - 1 pt
+                    Correct result - 1pt
                     <br />
                     Incorrect result - 0pts
                   </p>
