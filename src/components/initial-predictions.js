@@ -46,7 +46,7 @@ const InitialPredictions = () => {
     const team1GoalInputs = document.getElementsByName("team-1-goals");
     team1GoalInputs.forEach((i) => {
       const value = i.value;
-      if (!value || value < 0) {
+      if (!value || value < 0 || value > 99) {
         isValid = false;
         return;
       }
@@ -58,7 +58,7 @@ const InitialPredictions = () => {
     const team2GoalInputs = document.getElementsByName("team-2-goals");
     team2GoalInputs.forEach((i) => {
       const value = i.value;
-      if (!value || value < 0) {
+      if (!value || value < 0 || value > 99) {
         isValid = false;
         return;
       }
