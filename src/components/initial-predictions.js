@@ -72,7 +72,7 @@ const InitialPredictions = () => {
     if (!tieBreakValue || tieBreakValue < 0) isValid = false;
 
     if (!isValid) {
-      alert("Please ensure all predictions are entered.");
+      alert("Please ensure all predictions are entered and between 0 and 99.");
       return;
     }
 
