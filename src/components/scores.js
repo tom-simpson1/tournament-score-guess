@@ -8,8 +8,6 @@ import useScroll from "../utils/useScroll";
 import NavigationBar from "./layout/navigation-bar";
 
 const Scores = () => {
-  console.log("Scores page hit!");
-
   const [scores, setScores] = useState({});
 
   const [executeScroll, elRef] = useScroll();
@@ -76,7 +74,6 @@ const Scores = () => {
     })
       .then((response) => {
         setScores(response.data);
-        console.log(response.data);
       })
       .catch((err) => {});
   }, []);
