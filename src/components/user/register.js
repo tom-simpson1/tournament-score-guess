@@ -13,6 +13,10 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [error, setError] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const CODE_REGEX = /^[a-zA-Z0-9]{6,}$/;
   const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_.]{3,23}$/;
@@ -26,28 +30,32 @@ const Register = () => {
     e.stopPropagation();
 
     setError("");
+    setCodeError("");
+    setUsernameError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
 
     if (!CODE_REGEX.test(code)) {
-      setError("Code invalid");
-      return;
+      setCodeError("Code invalid");
     }
 
     if (!USER_REGEX.test(username)) {
-      setError(
+      setUsernameError(
         "Username must be 4 to 24 characters, begin with a letter and only contain letters, numbers, fullstops, underscores, and hyphens."
       );
-      return;
     }
 
     if (!PWD_REGEX.test(password)) {
-      setError(
+      setPasswordError(
         "Password must be at least 8 characters long and contain at least one lower case, one upper case and 1 number."
       );
-      return;
     }
 
     if (confirmPassword !== password) {
-      setError("Passwords do not match.");
+      setConfirmPasswordError("Passwords do not match.");
+    }
+
+    if (codeError || usernameError || passwordError || confirmPasswordError) {
       return;
     }
 
@@ -78,7 +86,11 @@ const Register = () => {
                     }}
                     defaultValue={code}
                     required
+                    isInvalid={codeError}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {codeError}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="username">
                   <Form.Label>Username</Form.Label>
@@ -89,7 +101,11 @@ const Register = () => {
                       setUsername(e.target.value);
                     }}
                     required
+                    isInvalid={usernameError}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {usernameError}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="email">
                   <Form.Label>Email address</Form.Label>
@@ -114,7 +130,11 @@ const Register = () => {
                       setPassword(e.target.value);
                     }}
                     required
+                    isInvalid={passwordError}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {passwordError}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="confirm-password">
                   <Form.Label>Confirm Password</Form.Label>
@@ -125,7 +145,11 @@ const Register = () => {
                       setConfirmPassword(e.target.value);
                     }}
                     required
+                    isInvalid={confirmPasswordError}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {confirmPasswordError}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <p className="error">{error}</p>
                 <Button variant="primary" type="submit">
