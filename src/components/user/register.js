@@ -35,27 +35,33 @@ const Register = () => {
     setPasswordError("");
     setConfirmPasswordError("");
 
+    let hasErrored = false;
+
     if (!CODE_REGEX.test(code)) {
+      hasErrored = true;
       setCodeError("Code invalid");
     }
 
     if (!USER_REGEX.test(username)) {
+      hasErrored = true;
       setUsernameError(
         "Username must be 4 to 24 characters, begin with a letter and only contain letters, numbers, fullstops, underscores, and hyphens."
       );
     }
 
     if (!PWD_REGEX.test(password)) {
+      hasErrored = true;
       setPasswordError(
         "Password must be at least 8 characters long and contain at least one lower case, one upper case and 1 number."
       );
     }
 
     if (confirmPassword !== password) {
+      hasErrored = true;
       setConfirmPasswordError("Passwords do not match.");
     }
 
-    if (codeError || usernameError || passwordError || confirmPasswordError) {
+    if (hasErrored) {
       return;
     }
 
