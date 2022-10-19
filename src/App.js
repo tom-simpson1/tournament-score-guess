@@ -3,6 +3,7 @@ import "./App.css";
 import InitialPredictions from "./components/initial-predictions";
 import Footer from "./components/layout/footer";
 import Leaderboard from "./components/leaderboard";
+import LoadingSpinner from "./components/loading-spinner.tsx";
 import Scores from "./components/scores";
 import Login from "./components/user/login";
 import Register from "./components/user/register";
@@ -26,6 +27,7 @@ const App = () => {
           <Route path="/scores" element={<Scores />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>
+        <LoadingSpinner />
         <Footer />
       </div>
     </AuthProvider>

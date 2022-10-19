@@ -180,3 +180,28 @@ body {
 .leaderboard-user-row {
   background-color: rgb(177, 210, 248);
 }
+
+.dual-ring-spinner {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+.dual-ring-spinner:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: dual-ring-spinner 1.2s linear infinite;
+}
+@keyframes dual-ring-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
