@@ -306,6 +306,18 @@ const Scores = () => {
                 );
               })
             : null}
+          {scores?.tieBreakAnswer ? (
+            <Row className="mx-auto">
+              <Col className="mx-auto p-2" md="10" lg="4">
+                <Card>
+                  <Card.Header>Tie Break</Card.Header>
+                  <Card.Body>
+                    You predicted <b>{scores.tieBreakAnswer}</b> cards.
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          ) : null}
         </Container>
       </Form>
     </>
