@@ -1,4 +1,3 @@
-import Axios from "axios";
 import { useState } from "react";
 import {
   Alert,
@@ -11,7 +10,6 @@ import {
 } from "react-bootstrap";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../utils/auth";
-import Footer from "../layout/footer";
 
 const Login = () => {
   const [username, setUsername] = useState("");

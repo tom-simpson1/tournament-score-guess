@@ -13,16 +13,13 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 import { useAuth } from "../utils/auth";
-import { useNavigate } from "react-router-dom";
 import NavigationBar from "./layout/navigation-bar";
-import Footer from "./layout/footer";
 
 const InitialPredictions = () => {
   const [predictions, setPredictions] = useState({});
   const [showRules, setShowRules] = useState(true);
 
   const auth = useAuth();
-  const navigate = useNavigate();
 
   const api = "https://tournament-score-guess.herokuapp.com/api";
 

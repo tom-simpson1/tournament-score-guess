@@ -1,8 +1,7 @@
-import Axios from "axios";
 import { useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import bcrypt from "bcryptjs";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../utils/auth";
 
 const Register = () => {
@@ -23,7 +22,6 @@ const Register = () => {
   const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,24}$/;
 
   const auth = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
