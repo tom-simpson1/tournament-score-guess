@@ -133,7 +133,11 @@ const InitialPredictions = () => {
                     All scores are for normal time - extra time and penalties
                     don't count. <br />
                     You can submit and update your predictions up until the day
-                    before the tournament starts.
+                    before the tournament starts.{" "}
+                    <b>
+                      You can't change <u>any</u> of your predictions once the
+                      tournament starts.
+                    </b>
                     <br />
                     Correct score - 3pts
                     <br />
