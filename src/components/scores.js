@@ -75,7 +75,11 @@ const Scores = () => {
       .then((response) => {
         setScores(response.data);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          auth.logout();
+        }
+      });
   }, []);
 
   useEffect(executeScroll, [scores]);

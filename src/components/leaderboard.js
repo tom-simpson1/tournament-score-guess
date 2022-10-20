@@ -28,8 +28,10 @@ const Leaderboard = () => {
       .then((response) => {
         setData(response.data);
       })
-      .catch(() => {
-        navigate("/");
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          auth.logout();
+        }
       });
   }, []);
 

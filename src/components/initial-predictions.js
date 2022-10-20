@@ -35,8 +35,10 @@ const InitialPredictions = () => {
       .then((response) => {
         setPredictions(response.data);
       })
-      .catch(() => {
-        navigate("/");
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          auth.logout();
+        }
       });
   }, []);
 
