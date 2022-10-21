@@ -151,7 +151,8 @@ const Scores = () => {
                     <div
                       ref={
                         m.UserScore !== null &&
-                        scores.matches[idx + 1]?.UserScore === null
+                        (scores.matches[idx + 1]?.UserScore === null ||
+                          scores.matches[idx + 1]?.UserScore === undefined)
                           ? elRef
                           : null
                       }
