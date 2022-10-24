@@ -307,7 +307,8 @@ const Scores = () => {
                 );
               })
             : null}
-          {scores?.tieBreakAnswer ? (
+          {scores?.tieBreakAnswer !== null &&
+          scores?.tieBreakAnswer !== undefined ? (
             <Row className="mx-auto">
               <Col className="mx-auto p-2" md="10" lg="4">
                 <Card>
