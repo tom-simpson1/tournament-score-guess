@@ -79,7 +79,7 @@ const InitialPredictions = () => {
 
     axios
       .post(
-        `${request}/predictions`,
+        `${request}`,
         {
           matches: predictions.matches,
           tieBreakAnswer: tieBreakValue,
