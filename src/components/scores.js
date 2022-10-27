@@ -87,7 +87,11 @@ const Scores = () => {
   return (
     <>
       <NavigationBar activeKey="scores" />
-      <h2 className="pt-3">{auth.user?.tournamentName} - Scores</h2>
+      <h2 className="pt-3">
+        {auth.user?.tournamentName}
+        <br />
+        Scores
+      </h2>
 
       <Form className="form py-3">
         <Container fluid>

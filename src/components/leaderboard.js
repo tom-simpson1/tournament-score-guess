@@ -38,7 +38,11 @@ const Leaderboard = () => {
   return (
     <>
       <NavigationBar activeKey="leaderboard" />
-      <h2 className="pt-3">{auth.user?.tournamentName} - Leaderboard</h2>
+      <h2 className="pt-3">
+        {auth.user?.tournamentName}
+        <br />
+        Leaderboard
+      </h2>
       {!isLoading && data ? (
         <Row className="mx-auto">
           <Col className="mx-auto p-2" md="10" lg="4">
