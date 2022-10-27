@@ -15,6 +15,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 import { useAuth } from "../utils/auth";
 import NavigationBar from "./layout/navigation-bar";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const InitialPredictions = () => {
   const [showRules, setShowRules] = useState(true);
@@ -271,7 +272,7 @@ const InitialPredictions = () => {
               </Button>
             </>
           ) : (
-            "Loading..."
+            <ClipLoader loading aria-label="Loading Spinner" size={50} />
           )}
         </Container>
       </Form>

@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/auth";
 import NavigationBar from "./layout/navigation-bar";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Leaderboard = () => {
   const auth = useAuth();
@@ -88,7 +89,7 @@ const Leaderboard = () => {
           </Col>
         </Row>
       ) : (
-        "Loading..."
+        <ClipLoader loading aria-label="Loading Spinner" size={50} />
       )}
     </>
   );

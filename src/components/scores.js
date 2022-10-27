@@ -7,6 +7,7 @@ import { useAuth } from "../utils/auth";
 import useScroll from "../utils/useScroll";
 import NavigationBar from "./layout/navigation-bar";
 import ScoreCard from "./score-card";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Scores = () => {
   const [executeScroll, elRef] = useScroll();
@@ -139,7 +140,7 @@ const Scores = () => {
               </Row>
             </>
           ) : (
-            "Loading..."
+            <ClipLoader loading aria-label="Loading Spinner" size={50} />
           )}
         </Container>
       </Form>
