@@ -6,8 +6,8 @@ import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../utils/auth";
 import useScroll from "../utils/useScroll";
 import NavigationBar from "./layout/navigation-bar";
+import LoadingSpinner from "./loading-spinner";
 import ScoreCard from "./score-card";
-import ClipLoader from "react-spinners/ClipLoader";
 
 const Scores = () => {
   const [executeScroll, elRef] = useScroll();
@@ -140,7 +140,7 @@ const Scores = () => {
               </Row>
             </>
           ) : (
-            <ClipLoader loading aria-label="Loading Spinner" size={50} />
+            <LoadingSpinner />
           )}
         </Container>
       </Form>
