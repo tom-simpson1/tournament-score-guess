@@ -1,7 +1,7 @@
-import Axios from "axios";
-import { format } from "date-fns";
-import { useEffect, useState } from "react";
-import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
+import axios from "axios";
+import { useEffect } from "react";
+import { Card, Col, Container, Form, Row } from "react-bootstrap";
+import { useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../utils/auth";
 import useScroll from "../utils/useScroll";
@@ -9,60 +9,12 @@ import NavigationBar from "./layout/navigation-bar";
 import ScoreCard from "./score-card";
 
 const Scores = () => {
-  const [scores, setScores] = useState({});
-
   const [executeScroll, elRef] = useScroll();
 
   const auth = useAuth();
   const [searchParams] = useSearchParams();
 
   const userId = searchParams.get("userId");
-
-  const api = "https://tournament-score-guess.herokuapp.com/api";
-
-  // const updateScore = (matchId) => {
-  //   const team1GoalsInput = document.getElementById(
-  //     `team-1-goals ${matchId}`
-  //   ).value;
-  //   const team2GoalsInput = document.getElementById(
-  //     `team-2-goals ${matchId}`
-  //   ).value;
-  //   let team1Goals = +team1GoalsInput;
-  //   let team2Goals = +team2GoalsInput;
-
-  //   if (
-  //     !team1GoalsInput ||
-  //     !team2GoalsInput ||
-  //     team1Goals < 0 ||
-  //     team2Goals < 0 ||
-  //     team1Goals > 99 ||
-  //     team2Goals > 99
-  //   ) {
-  //     alert("Please ensure scores entered are valid.");
-  //     return;
-  //   }
-
-  //   Axios.post(
-  //     `${api}/score`,
-  //     {
-  //       matchId,
-  //       team1Goals,
-  //       team2Goals,
-  //     },
-  //     {
-  //       headers: {
-  //         Authorization: "Bearer " + localStorage.getItem("token"),
-  //       },
-  //     }
-  //   )
-  //     .then((res) => {
-  //       alert("Scores updated.");
-  //       window.location.reload(false);
-  //     })
-  //     .catch((err) => {
-  //       alert(err);
-  //     });
-  // };
 
   const updateScore = (matchId, team1GoalsInput, team2GoalsInput) => {
     console.log(matchId, team1GoalsInput, team2GoalsInput);
@@ -83,19 +35,20 @@ const Scores = () => {
       return;
     }
 
-    Axios.post(
-      `${api}/score`,
-      {
-        matchId,
-        team1Goals,
-        team2Goals,
-      },
-      {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
+    axios
+      .post(
+        `${request}/score`,
+        {
+          matchId,
+          team1Goals,
+          team2Goals,
         },
-      }
-    )
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      )
       .then((res) => {
         alert("Scores updated.");
         window.location.reload(false);
@@ -105,21 +58,29 @@ const Scores = () => {
       });
   };
 
-  useEffect(() => {
-    Axios.get(`${api}/scores?userId=${userId ?? auth.user?.userId}`, {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((response) => {
-        setScores(response.data);
-      })
-      .catch((err) => {
+  const request = "https://tournament-score-guess.herokuapp.com/api/scores";
+
+  const { data: scores, isLoading } = useQuery(
+    [request, { userId }],
+    async () => {
+      try {
+        const res = await axios.get(
+          `${request}?userId=${userId ?? auth.user?.userId}`,
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
+        return res.data;
+      } catch (err) {
         if (err.response?.status === 401) {
           auth.logout();
         }
-      });
-  }, []);
+        return {};
+      }
+    }
+  );
 
   useEffect(executeScroll, [scores]);
 
@@ -130,29 +91,30 @@ const Scores = () => {
 
       <Form className="form py-3">
         <Container fluid>
-          <Row className="mx-auto">
-            <Col className="mx-auto p-2" md="10" lg="4">
-              <Card>
-                <Card.Header>Scores</Card.Header>
-                <Card.Body>
-                  <div>
-                    Username: <b>{scores?.username}</b>
-                  </div>
-                  <div>
-                    Total Points: <b>{scores?.totalPoints}</b>
-                  </div>
-                  <div>
-                    Correct Scores: <b>{scores?.correctScores}</b>
-                  </div>
-                  <div>
-                    Correct Results: <b>{scores?.correctResults}</b>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-          {scores && scores.matches?.length > 0
-            ? scores.matches.map((m, idx) => {
+          {!isLoading && scores ? (
+            <>
+              <Row className="mx-auto">
+                <Col className="mx-auto p-2" md="10" lg="4">
+                  <Card>
+                    <Card.Header>Scores</Card.Header>
+                    <Card.Body>
+                      <div>
+                        Username: <b>{scores?.username}</b>
+                      </div>
+                      <div>
+                        Total Points: <b>{scores?.totalPoints}</b>
+                      </div>
+                      <div>
+                        Correct Scores: <b>{scores?.correctScores}</b>
+                      </div>
+                      <div>
+                        Correct Results: <b>{scores?.correctResults}</b>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+              {scores.matches.map((m, idx) => {
                 return (
                   <ScoreCard
                     key={`match${m.MatchId}`}
@@ -164,21 +126,21 @@ const Scores = () => {
                     handleSubmit={updateScore}
                   />
                 );
-              })
-            : null}
-          {scores?.tieBreakAnswer !== null &&
-          scores?.tieBreakAnswer !== undefined ? (
-            <Row className="mx-auto">
-              <Col className="mx-auto p-2" md="10" lg="4">
-                <Card>
-                  <Card.Header>Tie Break</Card.Header>
-                  <Card.Body>
-                    You predicted <b>{scores.tieBreakAnswer}</b> cards.
-                  </Card.Body>
-                </Card>
-              </Col>
-            </Row>
-          ) : null}
+              })}
+              <Row className="mx-auto">
+                <Col className="mx-auto p-2" md="10" lg="4">
+                  <Card>
+                    <Card.Header>Tie Break</Card.Header>
+                    <Card.Body>
+                      You predicted <b>{scores.tieBreakAnswer}</b> cards.
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+            </>
+          ) : (
+            "Loading..."
+          )}
         </Container>
       </Form>
     </>

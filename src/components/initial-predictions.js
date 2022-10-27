@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "react-query";
 import "../App.css";
-import Axios from "axios";
+import axios from "axios";
 import {
   Row,
   Col,
@@ -16,28 +17,28 @@ import { useAuth } from "../utils/auth";
 import NavigationBar from "./layout/navigation-bar";
 
 const InitialPredictions = () => {
-  const [predictions, setPredictions] = useState({});
   const [showRules, setShowRules] = useState(true);
 
   const auth = useAuth();
 
-  const api = "https://tournament-score-guess.herokuapp.com/api";
+  const request =
+    "https://tournament-score-guess.herokuapp.com/api/predictions";
 
-  useEffect(() => {
-    Axios.get(`${api}/predictions`, {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((response) => {
-        setPredictions(response.data);
-      })
-      .catch((err) => {
-        if (err.response?.status === 401) {
-          auth.logout();
-        }
+  const { data: predictions, isLoading } = useQuery([request], async () => {
+    try {
+      const res = await axios.get(request, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
       });
-  }, []);
+      return res.data;
+    } catch (err) {
+      if (err.response?.status === 401) {
+        auth.logout();
+      }
+      return {};
+    }
+  });
 
   const submit = () => {
     let isValid = true;
@@ -75,25 +76,27 @@ const InitialPredictions = () => {
       return;
     }
 
-    Axios.post(
-      `${api}/predictions`,
-      {
-        matches: predictions.matches,
-        tieBreakAnswer: tieBreakValue,
-      },
-      {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
+    axios
+      .post(
+        `${request}/predictions`,
+        {
+          matches: predictions.matches,
+          tieBreakAnswer: tieBreakValue,
         },
-      }
-    ).then((res) => {
-      alert(
-        `Your predictions were successfully ${
-          isInsert ? "submitted" : "updated"
-        }!`
-      );
-      window.location.reload(false);
-    });
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      )
+      .then((res) => {
+        alert(
+          `Your predictions were successfully ${
+            isInsert ? "submitted" : "updated"
+          }!`
+        );
+        window.location.reload(false);
+      });
   };
 
   const groupBy = (xs, key) => {
@@ -146,8 +149,9 @@ const InitialPredictions = () => {
               </Col>
             </Row>
           ) : null}
-          {predictions && predictions.matches?.length > 0
-            ? groupBy(predictions.matches, "MatchGroup").map((g) => {
+          {!isLoading && predictions ? (
+            <>
+              {groupBy(predictions.matches, "MatchGroup").map((g) => {
                 return (
                   <Row className="mx-auto" key={g.key}>
                     <Col className="mx-auto p-2" md="10" lg="4">
@@ -237,38 +241,39 @@ const InitialPredictions = () => {
                     </Col>
                   </Row>
                 );
-              })
-            : null}
-          {predictions?.tieBreakQuestion ? (
-            <Row className="mx-auto">
-              <Col className="mx-auto p-1" md="10" lg="4">
-                <Card>
-                  <Card.Header className="px-0">Tie Break</Card.Header>
-                  <Card.Body>
-                    <Row>
-                      <Col>
-                        <label className="p-2">
-                          {predictions.tieBreakQuestion}
-                        </label>
-                        <input
-                          style={{ width: "50px" }}
-                          type="number"
-                          min="0"
-                          max="1000"
-                          id="tie-break"
-                          defaultValue={predictions.tieBreakAnswer}
-                        />
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              </Col>
-            </Row>
-          ) : null}
+              })}
+              <Row className="mx-auto">
+                <Col className="mx-auto p-1" md="10" lg="4">
+                  <Card>
+                    <Card.Header className="px-0">Tie Break</Card.Header>
+                    <Card.Body>
+                      <Row>
+                        <Col>
+                          <label className="p-2">
+                            {predictions.tieBreakQuestion}
+                          </label>
+                          <input
+                            style={{ width: "50px" }}
+                            type="number"
+                            min="0"
+                            max="1000"
+                            id="tie-break"
+                            defaultValue={predictions.tieBreakAnswer}
+                          />
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+              <Button className="m-3" onClick={submit}>
+                Submit
+              </Button>
+            </>
+          ) : (
+            "Loading..."
+          )}
         </Container>
-        <Button className="m-3" onClick={submit}>
-          Submit
-        </Button>
       </Form>
     </>
   );
