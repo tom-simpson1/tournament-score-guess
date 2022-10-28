@@ -64,14 +64,13 @@ function useAuthProvider() {
       });
   };
 
-  const register = async (code, username, email, password, salt) => {
+  const register = async (code, username, email, password) => {
     return await axios
       .post(`${api}/register`, {
         code,
         username,
         email,
         password,
-        salt,
       })
       .then((res) => {
         if (res.data.message) {

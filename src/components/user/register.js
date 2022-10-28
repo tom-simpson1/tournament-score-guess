@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import bcrypt from "bcryptjs";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../utils/auth";
 
@@ -63,10 +62,7 @@ const Register = () => {
       return;
     }
 
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(password, salt);
-
-    auth.register(code, username, email, hashedPassword, salt).then((res) => {
+    auth.register(code, username, email, password).then((res) => {
       if (res) setError(res);
     });
   };
