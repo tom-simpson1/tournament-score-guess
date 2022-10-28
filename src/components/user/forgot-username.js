@@ -8,7 +8,8 @@ const ForgotUsername = () => {
 
   const navigate = useNavigate();
 
-  const request = "http://localhost:3001/api/forgotusername";
+  const request =
+    "https://tournament-score-guess.herokuapp.com/api/forgotusername";
 
   const handleSubmit = (e) => {
     e.preventDefault();
