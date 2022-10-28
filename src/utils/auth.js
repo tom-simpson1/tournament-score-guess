@@ -77,7 +77,7 @@ function useAuthProvider() {
         if (res.data.message) {
           return res.data.message;
         }
-        navigate("/?registered=true");
+        navigate("/?message=registered");
       })
       .catch((err) => {
         return err;

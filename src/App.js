@@ -7,7 +7,8 @@ import Scores from "./components/scores";
 import Login from "./components/user/login";
 import Register from "./components/user/register";
 import { AuthProvider } from "./utils/auth";
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
+import ForgotUsername from "./components/user/forgot-username";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgotusername" element={<ForgotUsername />} />
             <Route
               path="/initialpredictions"
               element={<InitialPredictions />}

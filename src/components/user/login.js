@@ -18,9 +18,7 @@ const Login = () => {
 
   const auth = useAuth();
   const [searchParams] = useSearchParams();
-  const [showRegistered, setShowRegistered] = useState(
-    searchParams.get("registered")
-  );
+  const [message, setMessage] = useState(searchParams.get("message"));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,14 +35,20 @@ const Login = () => {
         {/* <h1 className="mb-3">Qatar 2022 Predictions</h1> */}
         <Row>
           <Col className="mx-auto" xs="12" md="4">
-            {showRegistered ? (
+            {message ? (
               <Alert
                 className="mx-auto"
-                variant="success"
-                onClose={() => setShowRegistered(false)}
+                variant={message === "registered" ? "success" : "info"}
+                onClose={() => setMessage("")}
                 dismissible
               >
-                <Alert.Heading>Registration Successful!</Alert.Heading>
+                <Alert.Heading>
+                  {message === "registered"
+                    ? "Registration Successful!"
+                    : message === "checkemail"
+                    ? "Please check your emails"
+                    : null}
+                </Alert.Heading>
               </Alert>
             ) : null}
             <Card>
@@ -74,11 +78,16 @@ const Login = () => {
                     />
                   </Form.Group>
                   <p className="error">{error}</p>
+                  <p className="mt-2">
+                    <Link to="/forgotusername">Forgot Username?</Link>
+                  </p>
                   <Button variant="primary" type="submit">
                     Submit
                   </Button>
                   <p className="mt-2">
-                    Got a code? <Link to="/register">Register</Link>
+                    <b>
+                      Got a code? <Link to="/register">Register</Link>
+                    </b>
                   </p>
                 </Form>
               </Card.Body>

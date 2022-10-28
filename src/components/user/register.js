@@ -121,9 +121,9 @@ const Register = () => {
                     }}
                     required
                   />
-                  <Form.Text className="text-muted">
+                  {/* <Form.Text className="text-muted">
                     Only used to contact you if you win.
-                  </Form.Text>
+                  </Form.Text> */}
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="password">
                   <Form.Label>Password</Form.Label>
