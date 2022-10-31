@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../utils/auth";
+import { BOOTSTRAP_PRIMARY } from "../../utils/colours";
+import LoadingSpinner from "../loading-spinner";
 
 const Register = () => {
   const [code, setCode] = useState("");
@@ -15,6 +17,8 @@ const Register = () => {
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const CODE_REGEX = /^[a-zA-Z0-9]{6,}$/;
   const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_.]{3,23}$/;
@@ -62,9 +66,11 @@ const Register = () => {
       return;
     }
 
+    setIsLoading(true);
     auth.register(code, username, email, password).then((res) => {
       if (res) setError(res);
     });
+    setIsLoading(false);
   };
 
   return (
@@ -154,6 +160,12 @@ const Register = () => {
                 <p className="error">{error}</p>
                 <Button variant="primary" type="submit">
                   Submit
+                  {isLoading ? (
+                    <LoadingSpinner
+                      height={20}
+                      circleColour={BOOTSTRAP_PRIMARY}
+                    />
+                  ) : null}
                 </Button>
                 <p className="mt-2">
                   Already have an account? <Link to="/">Login</Link>

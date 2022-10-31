@@ -43,7 +43,7 @@ const Login = () => {
             {message ? (
               <Alert
                 className="mx-auto"
-                variant={message === "registered" ? "success" : "info"}
+                variant={message === "checkemail" ? "info" : "success"}
                 onClose={() => setMessage("")}
                 dismissible
               >
@@ -52,6 +52,8 @@ const Login = () => {
                     ? "Registration Successful!"
                     : message === "checkemail"
                     ? "Please check your emails"
+                    : message === "passwordreset"
+                    ? "Password successfully reset!"
                     : null}
                 </Alert.Heading>
               </Alert>
@@ -86,9 +88,9 @@ const Login = () => {
                   <p className="mt-2">
                     <Link to="/forgotusername">Forgot Username?</Link>
                   </p>
-                  {/* <p className="mt-2">
+                  <p className="mt-2">
                     <Link to="/forgotpassword">Forgot Password?</Link>
-                  </p> */}
+                  </p>
                   <Button variant="primary" type="submit">
                     Submit
                     {isLoading ? (

@@ -2,22 +2,27 @@ import { useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import LoadingSpinner from "../loading-spinner";
+import { BOOTSTRAP_PRIMARY } from "../../utils/colours";
 
 const ForgotPassword = () => {
   const [username, setUsername] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const request =
     "https://tournament-score-guess.herokuapp.com/api/forgotpassword";
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     try {
-      axios.post(request, { username });
+      setIsLoading(true);
+      await axios.post(request, { username });
     } finally {
+      setIsLoading(false);
       navigate("/?message=checkemail");
     }
   };
@@ -47,6 +52,12 @@ const ForgotPassword = () => {
                 </Form.Group>
                 <Button variant="primary" type="submit">
                   Submit
+                  {isLoading ? (
+                    <LoadingSpinner
+                      height={20}
+                      circleColour={BOOTSTRAP_PRIMARY}
+                    />
+                  ) : null}
                 </Button>
                 <p className="mt-2">
                   <Link to="/">Back to Login</Link>
