@@ -86,9 +86,9 @@ const Login = () => {
                   <p className="mt-2">
                     <Link to="/forgotusername">Forgot Username?</Link>
                   </p>
-                  <p className="mt-2">
+                  {/* <p className="mt-2">
                     <Link to="/forgotpassword">Forgot Password?</Link>
-                  </p>
+                  </p> */}
                   <Button variant="primary" type="submit">
                     Submit
                     {isLoading ? (
