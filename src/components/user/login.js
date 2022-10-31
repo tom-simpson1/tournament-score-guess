@@ -10,6 +10,8 @@ import {
 } from "react-bootstrap";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../utils/auth";
+import { BOOTSTRAP_PRIMARY } from "../../utils/colours";
+import LoadingSpinner from "../loading-spinner";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -19,14 +21,17 @@ const Login = () => {
   const auth = useAuth();
   const [searchParams] = useSearchParams();
   const [message, setMessage] = useState(searchParams.get("message"));
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    auth.login(username, password).then((res) => {
+    setIsLoading(true);
+    await auth.login(username, password).then((res) => {
       if (res) setError(res);
     });
+    setIsLoading(false);
   };
 
   return (
@@ -81,8 +86,17 @@ const Login = () => {
                   <p className="mt-2">
                     <Link to="/forgotusername">Forgot Username?</Link>
                   </p>
+                  <p className="mt-2">
+                    <Link to="/forgotpassword">Forgot Password?</Link>
+                  </p>
                   <Button variant="primary" type="submit">
                     Submit
+                    {isLoading ? (
+                      <LoadingSpinner
+                        height={20}
+                        circleColour={BOOTSTRAP_PRIMARY}
+                      />
+                    ) : null}
                   </Button>
                   <p className="mt-2">
                     <b>

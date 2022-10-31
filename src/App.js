@@ -9,6 +9,7 @@ import Register from "./components/user/register";
 import { AuthProvider } from "./utils/auth";
 import { QueryClient, QueryClientProvider } from "react-query";
 import ForgotUsername from "./components/user/forgot-username";
+import ForgotPassword from "./components/user/forgot-password";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="/" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgotusername" element={<ForgotUsername />} />
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
             <Route
               path="/initialpredictions"
               element={<InitialPredictions />}
