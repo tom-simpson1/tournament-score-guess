@@ -1,5 +1,6 @@
 import axios from "axios";
-import { Col, Row, Table } from "react-bootstrap";
+import { useState } from "react";
+import { Alert, Col, Row, Table } from "react-bootstrap";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/auth";
@@ -10,10 +11,13 @@ const Leaderboard = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const handleRowClick = (userId) => {
-    if (userId === auth.user.userId || auth.user.isAdmin) {
-      navigate(`/scores?userId=${userId}`);
-    }
+  const [showTip, setShowTip] = useState(true);
+
+  const handleRowClick = (username) => {
+    // if (userId === auth.user.userId || auth.user.isAdmin) {
+    //   navigate(`/scores?userId=${userId}`);
+    // }
+    navigate(`/scores?user=${username}`);
   };
 
   const request =
@@ -31,7 +35,7 @@ const Leaderboard = () => {
       if (err.response?.status === 401) {
         auth.logout();
       }
-      return {};
+      return [];
     }
   });
 
@@ -43,6 +47,15 @@ const Leaderboard = () => {
         <br />
         Leaderboard
       </h2>
+      {showTip ? (
+        <Row className="mx-auto">
+          <Col className="mx-auto p-2" md="10" lg="4">
+            <Alert variant="info" dismissible onClose={() => setShowTip(false)}>
+              Click a user's row to view their scores/predictions
+            </Alert>
+          </Col>
+        </Row>
+      ) : null}
       {!isLoading && data ? (
         <Row className="mx-auto">
           <Col className="mx-auto p-2" md="10" lg="4">
@@ -77,7 +90,7 @@ const Leaderboard = () => {
                               : ""
                           }
                           key={`leaderboard-row-${idx}`}
-                          onClick={() => handleRowClick(x.UserId)}
+                          onClick={() => handleRowClick(x.Username)}
                         >
                           <td>{pos}</td>
                           <td>{x.Username}</td>

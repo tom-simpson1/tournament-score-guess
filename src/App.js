@@ -28,14 +28,14 @@ const App = () => {
         >
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            {/* <Route path="/register" element={<Register />} /> */}
             <Route path="/forgotusername" element={<ForgotUsername />} />
             <Route path="/forgotpassword" element={<ForgotPassword />} />
             <Route path="/resetpassword" element={<ResetPassword />} />
-            <Route
+            {/* <Route
               path="/initialpredictions"
               element={<InitialPredictions />}
-            />
+            /> */}
             <Route path="/scores" element={<Scores />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
           </Routes>

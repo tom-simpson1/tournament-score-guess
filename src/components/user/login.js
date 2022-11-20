@@ -100,11 +100,11 @@ const Login = () => {
                       />
                     ) : null}
                   </Button>
-                  <p className="mt-2">
+                  {/* <p className="mt-2">
                     <b>
                       Got a code? <Link to="/register">Register</Link>
                     </b>
-                  </p>
+                  </p> */}
                 </Form>
               </Card.Body>
             </Card>

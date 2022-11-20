@@ -91,7 +91,7 @@ const ScoreCard = (props) => {
                       {match.Team2PredictedGoals}
                     </span>
                   </div>
-                  <small>Final Score</small>
+                  <small>Score</small>
                   <div>
                     <span
                       className={`score-box ${

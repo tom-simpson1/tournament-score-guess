@@ -14,14 +14,14 @@ const NavigationBar = (props) => {
     >
       <Container>
         <Nav className="me-auto" activeKey={activeKey}>
-          <Nav.Item>
+          {/* <Nav.Item>
             <Nav.Link href="/initialpredictions" eventKey="predictions">
               Predictions
             </Nav.Link>
-          </Nav.Item>
+          </Nav.Item> */}
           <Nav.Item>
             <Nav.Link
-              href={`/scores?userId=${auth.user?.userId}`}
+              href={`/scores?user=${auth.user?.username}`}
               eventKey="scores"
             >
               Scores

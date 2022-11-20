@@ -57,7 +57,7 @@ function useAuthProvider() {
         if (res.data.message) return res.data.message;
         localStorage.setItem("token", res.data.token);
         setUser(res.data.user);
-        navigate("/initialpredictions");
+        navigate("/scores");
       })
       .catch((err) => {
         return err;

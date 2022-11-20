@@ -15,7 +15,7 @@ const Scores = () => {
   const auth = useAuth();
   const [searchParams] = useSearchParams();
 
-  const userId = searchParams.get("userId");
+  const user = searchParams.get("user");
   const api = "https://tournament-score-guess.herokuapp.com/api";
 
   const updateScore = (matchId, team1GoalsInput, team2GoalsInput) => {
@@ -61,11 +61,11 @@ const Scores = () => {
   };
 
   const { data: scores, isLoading } = useQuery(
-    [`${api}/scores`, { userId }],
+    [`${api}/scores`, { user }],
     async () => {
       try {
         const res = await axios.get(
-          `${api}/scores?userId=${userId ?? auth.user?.userId}`,
+          `${api}/scores?username=${user ?? auth.user?.username}`,
           {
             headers: {
               Authorization: "Bearer " + localStorage.getItem("token"),
